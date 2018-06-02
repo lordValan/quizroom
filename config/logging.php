@@ -39,20 +39,20 @@ return [
         ],
 
         'single' => [
-            'driver' => 'single',
+            'driver' => 'errorlog',
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
         ],
 
         'daily' => [
-            'driver' => 'daily',
+            'driver' => 'errorlog',
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
             'days' => 7,
         ],
 
         'slack' => [
-            'driver' => 'slack',
+            'driver' => 'errorlog',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
             'username' => 'Laravel Log',
             'emoji' => ':boom:',
@@ -60,7 +60,7 @@ return [
         ],
 
         'stderr' => [
-            'driver' => 'monolog',
+            'driver' => 'errorlog',
             'handler' => StreamHandler::class,
             'with' => [
                 'stream' => 'php://stderr',
