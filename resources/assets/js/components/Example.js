@@ -21,4 +21,7 @@ export default class Example extends Component {
     }
 }
 
-ReactDOM.render(<Example />, document.getElementById('App'));
+ReactDOM.render(
+    <Example />, 
+    document.getElementById('App')
+);
