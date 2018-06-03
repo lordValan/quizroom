@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import { Doughnut as DoughnutChart, Line as LineChart, Bar as BarChart } from 'react-chartjs-2';
+import { Doughnut as DoughnutChart, Line as LineChart, Bar as BarChart, Radar as RadarChart } from 'react-chartjs-2';
 
 export default class TabsExample extends React.Component {
 
@@ -71,6 +71,12 @@ export default class TabsExample extends React.Component {
             <div>
               <h2>Controllable Tab C</h2>
               <BarChart data={ datadd } redraw={ this.state.shouldRedraw } />
+            </div>
+          </Tab>
+          <Tab label="Tab D" value="d" className="Tab">
+            <div>
+              <h2>Controllable Tab D</h2>
+              <RadarChart data={ datadd } redraw={ this.state.shouldRedraw } />
             </div>
           </Tab>
         </Tabs>

@@ -1,0 +1,171 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+
+:root {  
+  --primary-color: #0098d4;
+  --primary-font-color: #3a3a3a;
+  --primary-border-blocks-color: #f3f3f3;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* variables */
+/* styles */
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+/* CircularLoaderContainer */
+.CircularLoaderContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CircularLoader */
+.CircularLoader svg > circle {
+  stroke: var(--primary-color) !important;
+}
+
+/* UnAuthContainer */
+.UnAuthContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MainAppStyles */
+.App {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  color: var(--primary-font-color);
+  width: 100%;
+  height: 100%;
+}
+
+.AppBar {
+  background-color: var(--primary-color) !important;
+  text-align: center;
+}
+.AppBar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* AppMenu */
+.AppMenuItem {
+  font-weight: 400 !important;
+  color: var(--primary-font-color) !important;
+}
+
+/* AppContent */
+.AppContent {
+  width: 70%;
+  padding: 50px 0;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  /* UserInfo */
+}
+.AppContent .UserInfo {
+  flex-basis: 25%;
+  margin-right: 5%;
+  height: fit-content;
+  border: 1px solid var(--primary-border-blocks-color);
+  padding: 10px;
+  text-align: center;
+}
+.AppContent .UserInfo .Avatar {
+  width: 150px;
+  height: auto;
+}
+.AppContent .UserInfo .FullName {
+  color: var(--primary-font-color);
+}
+.AppContent .ContentBlock {
+  flex-basis: 70%;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  /* MainContent */
+}
+.AppContent .ContentBlock .MainContent > .container:first-child .MainContentInfoBlock {
+  margin-top: 0;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock {
+  margin-top: 25px;
+  outline: 1px solid var(--primary-border-blocks-color);
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Title {
+  padding: 10px 20px;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Title > h1 {
+  margin: 0;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content {
+  padding: 20px;
+  box-sizing: border-box;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .Tab {
+  background-color: #08b9ff !important;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container .button-next > button {
+  background-color: var(--primary-color) !important;
+  transition: opacity 0.3s ease-in-out;
+}
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container .button-next > button:disabled {
+  opacity: 0.5;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.fade-leave {
+  opacity: 0;
+}
+
+.fade-leave.fade-leave-active {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.fade-appear {
+  opacity: 0;
+}
+
+.fade-appear.fade-appear-active {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.quiz-answer {
+  padding: 15px 20px;
+  box-sizing: border-box;
+  border-top: 1px solid #eee;
+}
+.quiz-answer svg:last-of-type {
+  fill: var(--primary-color) !important;
+}
+
+.quiz-answer:hover {
+  background-color: #eefbfe;
+}
