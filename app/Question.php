@@ -9,7 +9,7 @@ class Question extends Model
     protected $table = 'questions';
 
     protected $hidden = [
-        'created_at', 'updated_at', 'quiz_id', 'id'
+        'created_at', 'updated_at', 'quiz_id'
     ];
 
     public function quiz(){
@@ -20,10 +20,21 @@ class Question extends Model
         return $this->hasMany('App\Answer');
     }
 
+    public function right_answers_amount() {
+        return count($this->answers->where('is_right', true));
+    }
+
+    public function is_multiple() {
+        $cnt = $this->right_answers_amount();
+
+        return $cnt > 1;
+    }
+
     public function toArray() {
         $data = parent::toArray();
-
-        $data['answers'] = $this->answers;
+        
+        $data['is_multiple'] = $this->is_multiple();
+        $data['answers'] = $this->answers->shuffle();
 
         return $data;
     }

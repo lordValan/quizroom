@@ -1,14 +1,673 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;subset=latin-ext");
 
 // Variables
 @import "variables";
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+%defaultButton {
+    background-color: #0098d4 !important;
+    color: #fff !important;
+    min-width: 50% !important;
+    margin: 30px auto 10px !important;
+    transition: background-color 0.3s ease-in-out;
 
-.navbar-laravel {
-  background-color: rgb(165, 30, 30);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    &:not(:disabled):hover {
+        background-color: lighten($color: #0098d4, $amount: 10) !important;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
 }
+
+%data_forms {
+    display: flex;
+    flex-direction: column;
+
+    & > *:not(button) {
+        width: 100% !important;
+    }
+
+    & > button {
+        @extend %defaultButton;        
+    }
+}
+
+/* styles */
+
+body {
+    overflow-x: hidden;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color: $primary-font-color; 
+}
+
+#root {
+    width: 100%;
+    height: 100vh;
+}
+
+/* CircularLoaderContainer */
+
+.CircularLoaderContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* CircularLoader */
+.CircularLoader {
+
+    & svg > circle {
+        stroke: $primary-color!important;
+    }
+}
+
+/* UnAuthContainer */
+.UnAuthContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    align-items: center;
+    box-sizing: border-box;
+
+    .LoginRegError {
+        color: red;
+        font-size: 16px;
+    }
+
+    form {
+        @extend %data_forms;
+
+        & > .loginRegSwitchButton {
+            margin: 5px auto !important;
+            background-color: darken($color: $primary-color, $amount: 10) !important;
+
+            &:hover {
+                background-color: darken($color: $primary-color, $amount: 20) !important;
+            }
+        }
+
+        .RegGendersBirthDate {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            & > * {
+                width: 49%;
+            }
+
+            & > .BirthDatePicker {
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+            .RegGenderButton {
+                padding: 5px 0px;
+                box-sizing: border-box;
+            
+                svg:last-of-type {
+                    fill: $primary-color!important;
+                }
+            
+                & > input {
+                    bottom: 0;
+                }
+            }
+        }        
+    }
+
+    
+}
+
+/* MainAppStyles */
+.App {      
+    width: 100%;
+    height: 100%;
+}
+
+.AppBar {
+    background-color: $primary-color !important;
+    text-align: center;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+/* AppMenu */
+.AppMenuItem {
+    font-weight: 400 !important;
+    color: $primary-font-color !important;   
+}
+
+/* AppContent */
+.AppContent {
+    width: 768px;
+    padding: 50px 0;
+    margin: 0 auto;
+
+    .ContentBlock {
+        box-sizing: border-box;
+        transition: all 0.3s ease-in-out;
+
+        /* MainContent */
+        .MainContent {
+            & > .container:first-child {
+                .MainContentInfoBlock {
+                    margin-top: 0;
+                }
+            }
+
+            .MainContentInfoBlock {
+                margin-top: 25px;
+                outline: 1px solid $primary-border-blocks-color;
+
+                .Title {
+                    padding: 10px 20px;
+                    
+                    & > h1 {
+                        margin: 0;
+                    }
+                }
+
+                .Content {
+                    padding: 20px;
+                    box-sizing: border-box;
+
+                    .Tab {
+                        background-color: lighten($primary-color, 10%) !important;
+                    }                    
+
+                    .pagination {
+                        list-style-type: none;
+                        padding: 0;
+                        width: fit-content;
+                        margin: 10px auto;
+                        display: flex;
+
+                        li {
+                            a {
+                                display: flex;
+                                width: 40px;
+                                height: 40px;
+                                align-items: center;
+                                justify-content: center;
+                                border: 1px solid $primary-border-blocks-color;
+                                border-right: none;
+                                color: $primary-color;
+                                text-decoration: none;
+                                transition: all 0.3s ease-in-out;                                
+                            }
+
+                            &:last-child a {
+                                border-right: 1px solid $primary-border-blocks-color;
+                            }
+
+                            &.active a {
+                                background-color: $primary-color;
+                                color: #fff;
+                            }
+
+                            &:not(.active) a:hover {
+                                background-color: #eee;
+                                color: darken($primary-color, 20%);
+                            }
+                        }
+                        
+                        li.disabled {
+                            a {
+                                background-color: #eee;
+                                color: darken($primary-color, 20%);
+                                cursor: not-allowed;
+                            }
+                        }
+                    }
+                    
+                    .QuizBlock {
+                        padding: 10px;
+                        border: 1px solid $primary-border-blocks-color;
+                        margin-bottom: 10px;
+
+                        .QuizBlockTitle {
+                            color: $primary-font-color;
+                            text-decoration: none;
+                            margin-bottom: 10px;
+                            display: inline-block;
+                            font-size: 24px;
+
+                            &:hover {
+                                text-decoration: underline;
+                            }
+                        }
+
+                        .QuizBlockRow {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 5px;
+
+                            &:first-of-type {                                
+                                border-top: 1px solid $primary-border-blocks-color;
+                                padding-top: 10px;
+                            }
+
+                            .Key {
+                                font-weight: 600;
+                                flex-basis: 30%;
+                                text-align: right;
+                            }
+
+                            .Value {
+                                flex-basis: 67%;
+                            }
+                        }
+                    }
+
+                    .QuizFilter {
+                        padding: 10px;
+                        border: 1px solid $primary-border-blocks-color;
+                        display: flex;
+                        justify-content: flex-end;
+                        align-items: center;
+                        margin-bottom: 15px;
+
+                        & > * {
+                            margin-right: 15px;
+
+                            &:last-child {
+                                margin-right: 0;
+                            }
+                        }
+
+                        .FilterSelect {
+                            width: 30%;
+                        }
+
+                        .FilterButtonSubmit {
+                            height: 36px;
+
+                            & > button {
+                                height: 100% !important;
+                                color: $primary-border-blocks-color;
+                                background-color: $primary-color!important;
+                                transition: opacity 0.3s ease-in-out;
+    
+                                &:disabled {
+                                    opacity: 0.5;
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    .QuizTimer {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .quiz-buttons-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 15px;
+
+        .button-next > button {
+            background-color: $primary-color!important;
+            transition: opacity 0.3s ease-in-out;
+
+            &:disabled {
+                opacity: 0.5;
+            }
+        }
+    }  
+
+    .LastResultsTable {
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .MainActivityInfo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .InfoItem {
+            flex-basis: 33.33%;
+            text-align: center;
+
+            & > h3 {
+                font-size: 32px;
+                margin: 10px 0;
+                font-weight: 200;
+            }
+        }
+    }
+
+    .TableRaiting {
+        .CurrentUser {
+            background-color: $primary-border-blocks-color;
+            font-weight: 600;
+        }
+    }
+
+    .UserInfo {
+        display: flex;
+        justify-content: space-between;
+
+        .Avatar {
+            flex-basis: 25%;
+        }
+
+        .Info {
+            flex-basis: 70%;
+            
+            .InfoItem {
+                display: flex;
+                justify-content: space-between;
+                margin: 5px 0;
+
+                .Key {
+                    flex-basis: 25%;
+                    font-weight: 600;
+                    text-align: right;
+
+                    &::after{
+                        content: ': ';
+                    }
+                }
+
+                .Value {
+                    flex-basis: 70%;
+                }
+            }
+        }
+    }
+    
+    .PreQuiz {
+        text-align: center;
+        
+        .PreQuizData {
+            margin-bottom: 20px;
+
+            .PreQuizDataItem {
+                display: flex;
+                justify-content: space-between;
+                margin: 5px 0;
+                
+    
+                & > * {
+                    flex-basis: 49.5%;
+                    align-self: flex-end;
+                }
+    
+                & > .Key {
+                    text-align: right;
+                    font-weight: 600;
+    
+                    &::after {
+                        content: ': ';
+                    }
+                }
+    
+                & > .Value {
+                    text-align: left;
+                }
+            }
+        }
+
+        .button-start-quiz > button {
+            background-color: $primary-color!important;
+            transition: opacity 0.3s ease-in-out;
+
+            &:disabled {
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .ProfileEditorForm {
+        @extend %data_forms;
+        
+        & > *:not(.Avatars) {
+            width: 50% !important;
+            margin: 0 auto;
+        }
+
+        .Avatars {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 25px;
+
+            & > .avatar {
+                flex-basis: 20%;
+                margin: 10px 1.5%;
+                border-radius: 5%;
+                cursor: pointer;  
+                border: 5px solid transparent; 
+                position: relative;
+                transition: all 0.2s ease-in-out;
+                
+                &.chosen-avatar {
+                    border-color: $primary-color;                    
+                }
+
+                &.chosen-avatar::after {
+                    content: '✔';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 5em;
+                    color: $primary-color;
+                }
+            }
+        }
+    }
+
+    .TableQuizzesManagemet {
+        a {
+            color: #000;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    .AdminQuizzes {
+        .AdminQuizzesHead {
+            display: flex;
+            justify-content: flex-end;
+
+            .PagePicker {
+                display: flex;
+                align-items: center;
+
+                & > .Page {
+                    margin-right: 10px;
+                }
+
+                & > .PageNumTF {
+                    max-width: 80px;
+
+                    & > input {
+                        text-align: center !important;
+                    }
+                    
+                }
+            }
+        }        
+    }
+
+    .EditQuizStepper {
+        .EditQuizForm {
+            padding: 5px 20px;
+
+            .FormRow {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                & > * {
+                    flex-basis: 49%;
+                }
+
+                & > .Description {
+                    flex-basis: 100%;
+                }
+            }
+
+            .ButtonContainer {
+                display: flex;
+                justify-content: flex-end;
+                margin: 10px 0;
+                
+                .NextFinishButton {
+                    margin-left: 15px !important;
+
+                    & > button {
+                        background-color: $primary-color !important;
+                    }
+                }
+            }
+
+            .Question {
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid $primary-border-blocks-color;
+
+                table, tr, td {
+                    border: 1px solid $primary-border-blocks-color;
+                    border-collapse: collapse;
+                }
+
+                table {
+                    width: 100%;
+
+                    td {
+                        padding: 0 10px;
+                        text-align: center !important;
+                        vertical-align: middle;
+                    }
+    
+                    .ColIndex, .ColBtns, .ColRight {
+                        width: 10%;
+                    }
+
+                    .ColIndex {
+                        font-size: 24px;
+                    }
+
+                    .ColText > .TF {
+                        width: 100% !important;
+                    }
+                }
+
+                .QuestionHead {
+                    .ColText {
+                        width: 80%;
+                    }
+                }
+
+                .QuestionAnswers {
+                    margin: 10px auto;
+
+                    .ColText {
+                        width: 70%;
+                    }
+                    
+                    .ColRight {
+                        span {
+                            left: 0 !important;
+                        }  
+                        
+                        .RightCheck {
+                            svg:last-of-type {
+                                fill: $primary-color!important;
+                            }
+                        }
+                    }
+                }               
+                
+            }
+
+            .AnswersButtonContainer, .QuestionsButtonContainer {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .QuestionsButtonContainer {
+                padding-bottom: 5px;
+            }
+        }
+    }
+}
+
+.fade-enter {
+    opacity: 0;
+  }
+
+  .fade-enter.fade-enter-active {
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .fade-leave {
+    opacity: 0;
+  }
+
+  .fade-leave.fade-leave-active {
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .fade-appear {
+    opacity: 0;
+  }
+
+  .fade-appear.fade-appear-active {
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .quiz-answer {
+    padding: 15px 20px;
+    box-sizing: border-box;
+    border-top: 1px solid #eee;
+
+    svg:last-of-type {
+        fill: $primary-color!important;
+    }
+
+    & > input {
+        bottom: 0;
+    }
+  }
+
+  .quiz-answer:hover {
+      background-color: #eefbfe;
+  }
+
+
+
+

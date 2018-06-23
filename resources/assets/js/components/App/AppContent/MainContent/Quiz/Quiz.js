@@ -1,99 +1,52 @@
 import React, { Component } from 'react';
 import Question from './Question';
 import QuestionCounter from './QuestionCounter';
-import RaisedButton from 'material-ui/RaisedButton';
-
-let questions = [{
-    id: 1,
-    isMultiple: false,
-    value: 'What is the best club of England?',
-    options: [
-        {
-            id: 1,
-            value: 'Arsenal'
-        },
-        {
-            id: 2,
-            value: 'Liverpool'
-        },
-        {
-            id: 3,
-            value: 'Chelsea'
-        },
-        {
-            id: 4,
-            value: 'Newcastle'
-        }
-    ]
-}, 
-{
-    id: 2,
-    isMultiple: true,
-    value: 'What are the luckiest clubs in Italy?',
-    options: [
-        {
-            id: 5,
-            value: 'Roma'
-        },
-        {
-            id: 6,
-            value: 'Juventus'
-        },
-        {
-            id: 7,
-            value: 'AC Milan'
-        },
-        {
-            id: 8,
-            value: 'Sampdoria'
-        },
-        {
-            id: 9,
-            value: 'Napoli'
-        }
-    ]
-},
-{
-    id: 3,
-    isMultiple: true,
-    value: 'What are the luckiest clubs in Italy?',
-    options: [
-        {
-            id: 5,
-            value: 'Roma'
-        },
-        {
-            id: 6,
-            value: 'Juventus'
-        },
-        {
-            id: 7,
-            value: 'AC Milan'
-        },
-        {
-            id: 8,
-            value: 'Sampdoria'
-        },
-        {
-            id: 9,
-            value: 'Napoli'
-        }
-    ]
-}
-];
+import { RaisedButton, Dialog, FlatButton } from 'material-ui';
+import { showCircullarProgress, StopLinkEvent, SecsToTime } from '../../../../../utils/AppHelper';
+import axios from 'axios';
+import Result from './Result';
+import QuizTimer from './QuizTimer';
+import Moment from 'react-moment';
+import Worker from 'worker-loader!../../../../../utils/TimerWorker.js';
 
 class Quiz extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            questions: questions,
+            IsLoaded: false,
             currentQuestion: 1,
             isLast: false,
+            isStarted: false,
             isFinished: false,
             isSet: false,
-            answers: []
-        };
+            answers: [],
+            startQuizDialogOpen: false,
+            currentSec: 0
+        };  
+        this.worker = undefined;
     }
+
+    componentDidMount() {
+        let token = localStorage.getItem('token');
+        let slug = this.props.parent_props.match.params.quiz;
+        this.timer_worker = undefined;
+        
+        axios.get('/api/quizzes/' + slug, {
+          params: {
+            'token': token
+          }
+        })
+        .then((response) => {
+            if(!response.data.access) {
+                this.setState( { access: false, IsLoaded: true } );
+            } else {
+                this.setState( { access: true, IsLoaded: true, quiz: response.data.quiz, isLast: response.data.quiz.questions.length === this.state.currentQuestion } );
+            }
+        })
+        .catch((error) => {
+            this.setState( { access: false, IsLoaded: true } );
+        });
+    } 
 
     setNextQuestion() {
         if(this.state.isLast) {
@@ -102,7 +55,7 @@ class Quiz extends Component {
 
         const counter = this.state.currentQuestion + 1;
 
-        if(this.state.questions.length === counter) {
+        if(this.state.quiz.questions.length === counter) {
             this.setState({isLast: true});
         }
 
@@ -114,7 +67,7 @@ class Quiz extends Component {
         let arr = this.state.answers;
 
         arr[qIndex] = {
-            questionId: this.state.questions[qIndex].id,
+            questionId: this.state.quiz.questions[qIndex].id,
             answer: [value]
         };
 
@@ -135,7 +88,7 @@ class Quiz extends Component {
         }
 
         arr[qIndex] = {
-            questionId: this.state.questions[qIndex].id,
+            questionId: this.state.quiz.questions[qIndex].id,
             answer: answArr
         };
 
@@ -148,56 +101,163 @@ class Quiz extends Component {
         this.setState({answers: arr});
     }
 
+    componentWillUnmount() {
+        if(this.worker) {
+            this.stopWorker();
+        }
+    }
+
     renderQuiz() {
         return (
             <div className={ this.props.className ? this.props.className : "Quiz" }>
-                <QuestionCounter counter={this.state.currentQuestion} total={this.state.questions.length} />
-                <Question question={ this.state.questions[this.state.currentQuestion - 1] } 
+                <QuizTimer pass_time={this.state.quiz.time_to_pass} current_sec={this.state.currentSec} />
+                <QuestionCounter counter={this.state.currentQuestion} total={this.state.quiz.questions.length} />
+                <Question question={ this.state.quiz.questions[this.state.currentQuestion - 1] } 
                     onSimpleSet={ this.simpleQuestionSetHandler.bind(this) }
                     onMultipleSet={ this.multipleQuestionSetHandler.bind(this) } />
                 <div className="quiz-buttons-container">
-                    <RaisedButton label={ this.state.isLast ? 'Finish' : 'Next' } className="button-next" primary={true}
+                    <RaisedButton label={ this.state.isLast ? 'Финиш' : 'Дальше' } className="button-next" primary={true}
                         disabled={ !this.state.isSet } onClick={ this.setNextQuestion.bind(this) } />
                 </div>
             </div>
         )
     }
 
-    renderResult() {
-        let answers = this.state.answers;
-
-        let options = [];
-
-        this.state.questions.forEach((question, i) => {
-            question.options.forEach((option, i) => {
-                let alreadyIn = options.filter((elem) => {
-                    return option.id === elem.id;
-                });
-
-                if(alreadyIn.length === 0){
-                    options.push(option);
-                }
-            });
-        });
+    renderPreQuiz() {
+        const startQuizDialogActions = [
+            <FlatButton
+              label="Да"
+              primary={ false }
+              onClick={ this.startQuiz.bind(this) }
+            />,
+            <FlatButton
+              label="Нет"
+              primary={ true }        
+              keyboardFocused={ true }
+              onClick={ this.startQuizCloseDialog.bind(this) }
+            />      
+        ];
 
         return (
-            answers.map((answ, i) => {
-                let str = '';
-                answ.answer.forEach((elem, i) => {
-                    str += options.find((option) => {
-                        return option.id === parseInt(elem, 10);
-                    }).value + ' ';
-                });
-
-                return <div key={answ.questionId}>
-                    <p>Answer #{i + 1}: { str }</p>
+            <div className="PreQuiz">
+                <h1>{this.state.quiz.name}</h1>
+                <p>{this.state.quiz.description}</p>
+                <div className="PreQuizData">
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Автор</span>
+                        <span className="Value">{this.state.quiz.author}</span>
+                    </div>                    
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Дата создания</span>
+                        <span className="Value">{<Moment format="DD MMMM YYYY" locale="ru" date={new Date(this.state.quiz.created_at)} />}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Категория</span>
+                        <span className="Value">{this.state.quiz.category.name}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Количество прохождений</span>
+                        <span className="Value">{this.state.quiz.passed}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Количество вопросов</span>
+                        <span className="Value">{this.state.quiz.questions.length}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Количество времени на прохождение</span>
+                        <span className="Value">{SecsToTime(this.state.quiz.time_to_pass)}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Среднее количество времени на прохождение</span>
+                        <span className="Value">{SecsToTime(this.state.quiz.aver_time)}</span>
+                    </div>
+                    <div className="PreQuizDataItem">
+                        <span className="Key">Средняя оценка</span>
+                        <span className="Value">{this.state.quiz.aver_score} ({this.state.quiz.aver_mark})</span>
+                    </div>
                 </div>
-            })
-        );
+                <RaisedButton label="Начать" className="button-start-quiz" primary={true}
+                        disabled={ this.state.quiz.questions.length <= 0 } onClick={ this.startQuizOpenDialog.bind(this) } />
+                <Dialog
+                    title="Вы готовы?"
+                    actions={ startQuizDialogActions }
+                    modal={ false }
+                    open={ this.state.startQuizDialogOpen }
+                    onRequestClose={ this.startQuizCloseDialog.bind(this) }
+                >
+                    Вы готовы приступить к прохождению теста?
+                </Dialog>
+            </div>
+        )
     }
 
-    render() {
-        return this.state.isFinished ? this.renderResult() : this.renderQuiz();      
+    startQuizOpenDialog() { 
+        this.setState({startQuizDialogOpen: true}); 
+    };
+
+    startQuizCloseDialog() {
+        this.setState({startQuizDialogOpen: false}); 
+    };
+
+    startQuiz() {
+        this.setState({isStarted: true}); 
+        this.startWorker();
+        this.linkClickStopEvents();
+    }
+
+    startWorker() {
+        this.worker = new Worker();
+        this.worker.addEventListener('message', (m) => { 
+            this.setState({currentSec: m.data}); 
+
+            if(this.state.quiz.time_to_pass === this.state.currentSec) {
+                this.setState({isFinished: true});                
+            }            
+        });
+    }
+    
+    stopWorker() { 
+        if(this.worker) {
+            this.worker.terminate();
+            this.worker = undefined;
+        }        
+    }
+
+    linkClickStopEvents() {
+        document.querySelectorAll('a').forEach((elem) => {
+            elem.addEventListener('click', StopLinkEvent);
+        });
+    }
+
+    linkClickAllowEvents() {
+        document.querySelectorAll('a').forEach((elem) => {
+            elem.removeEventListener('click', StopLinkEvent);
+        });
+    }
+
+    renderResult() {
+        this.stopWorker();
+        this.linkClickAllowEvents();
+        return <Result answers={this.state.answers} quizId={this.state.quiz.id} pass_time={this.state.currentSec} />
+    }
+
+    renderComponent() {
+        if(this.state.access) {
+            if(!this.state.isStarted && !this.state.isFinished) {
+                return this.renderPreQuiz();
+            } else if(this.state.isStarted && !this.state.isFinished) {
+                return this.renderQuiz();
+            } else if(this.state.isStarted && this.state.isFinished) {
+                return this.renderResult();
+            } 
+        }
+        else {
+            return <p>Доступ запрещен!</p>;
+        }
+    }
+
+    render() {       
+        return !this.state.IsLoaded ? showCircullarProgress() : this.renderComponent();   
     }
 }
 

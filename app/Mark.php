@@ -16,4 +16,10 @@ class Mark extends Model
     {
         return 'name';
     }   
+
+    public static function getMarkName($score) {
+        return Mark::where('min_score', '<=', $score)
+                    ->where('max_score', '>=', $score)
+                    ->first()->name;
+    }
 }

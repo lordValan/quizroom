@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
+use App\Gender;
+use App\UserInfo;
+use App\Avatar;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Validator, DB, Hash, Mail;
+use Validator, Hash;
 use Illuminate\Support\Facades\Password;
+use DateTime;
 
 class AuthController extends Controller
 {
@@ -18,34 +22,41 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $credentials = $request->only('email', 'password', 'first_name', 'last_name', 'date_of_birth');
+        $credentials = $request->only('email', 'password', 'gender', 'first_name', 'last_name', 'date_of_birth');
         
         $rules = [
             'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6|max:32',
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'date_of_birth' => 'nullable|date'
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'required'
         ];
         $validator = Validator::make($credentials, $rules);
         if($validator->fails()) {
-            return response()->json(['success'=> false, 'error'=> $validator->messages()]);
+            return response()->json(['success'=> false, 'error'=> 'Некорректные данные :(']);
         }
         
         $email = $request->email;
         $password = $request->password;
-        $admin = false;        
+        $admin = 0;        
         
         $user = User::create(['email' => $email, 'password' => Hash::make($password), 'admin' => $admin]);
-        $info = array(
+
+        $birth = new DateTime($request->date_of_birth);
+        $gender_avatars = Avatar::where('gender_id', $request->gender)->get();
+        $avatar_id = count($gender_avatars) > 0 ? $gender_avatars->first()->id : Avatar::all()->first()->id;
+       
+        $info_arr = array(
             'user_id' => $user->id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'date_of_birth' => $request->date_of_birth,
-            'avatar_id' => 1,
-            'gender_id' => $request->gender
+            'date_of_birth' => $birth->format('Y-m-d'),
+            'avatar_id' => $avatar_id,
+            'gender_id' => $request->gender,
         );
-
-        DB::table('users_info')->insert($info);
+        
+        UserInfo::create($info_arr);
         
         return $this->login($request);
     }
@@ -65,17 +76,17 @@ class AuthController extends Controller
         ];
         $validator = Validator::make($credentials, $rules);
         if($validator->fails()) {
-            return response()->json(['success'=> false, 'error'=> $validator->messages()]);
+            return response()->json(['success'=> false, 'error'=> 'Некорректные данные :(']);
         }
         
         try {
             // attempt to verify the credentials and create a token for the user
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['success' => false, 'error' => 'We cant find an account with this credentials. Please make sure you entered the right information and you have verified your email address.'], 401);
+                return response()->json(['success' => false, 'error' => 'Пользователя с такими данными не существует :(']);
             }
         } catch (JWTException $e) {
             // something went wrong whilst attempting to encode the token
-            return response()->json(['success' => false, 'error' => 'Failed to login, please try again.'], 500);
+            return response()->json(['success' => false, 'error' => 'Не удалось войти. Пожалуйста, попробуйте немногопозже :(']);
         }
         // all good so return the token
         return response()->json(['success' => true, 'data'=> [ 'token' => $token ]]);
@@ -96,5 +107,34 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['success' => false, 'error' => 'Failed to logout, please try again.'], 500);
         }
+    }
+
+    public function is_auth(Request $request) {
+        $this->validate($request, ['token' => 'required']);
+
+        try {
+            $user = JWTAuth::parseToken()->toUser();
+            $token = $request->input('token');
+
+            if($this->should_token_refresh()) {
+                JWTAuth::invalidate($token);
+                $token = JWTAuth::fromUser($user);
+            }
+
+            return response()->json(['success' => true, 'message'=> "You are logged in.", 'token' => $token]);
+        } catch (JWTException $e) {
+            return response()->json(['success' => false, 'error' => 'Failed to auth.', 'reg_data' => array(
+                'genders' => Gender::all()
+            )]);
+        }
+    }
+
+    private function should_token_refresh() {
+        $exp_time = JWTAuth::parseToken()->payload()['exp'] * 1000;
+        $curr_time = (new DateTime(date('c')))->getTimestamp() * 1000;
+        $diff = $exp_time - $curr_time;
+        $hours_last = 24 - (($diff / (1000*60*60)) % 24);
+        
+        return $hours_last > 5 ? true : false;        
     }
 }

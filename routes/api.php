@@ -15,9 +15,11 @@ use Illuminate\Http\Request;
 
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
+Route::get('genders', 'GenderController@genders');
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('logout', 'AuthController@logout');
+    Route::get('auth', 'AuthController@is_auth');
 
     /* Avatars */
 
@@ -26,6 +28,10 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     /* Users */
 
     Route::get('user', 'UserController@user');
+    Route::get('user/info', 'UserController@user_info');
+    Route::get('user/invitations', 'QuizController@user_invitations');
+    Route::get('user/profile', 'UserController@profile');
+    Route::post('user/profile', 'UserController@edit_profile');
 
     /* Categories */
 
@@ -43,4 +49,15 @@ Route::group(['middleware' => ['jwt.auth']], function() {
 
     Route::get('marks', 'MarksController@marks');
     Route::get('marks/{mark}', 'MarksController@mark');
+
+    /* Results */
+
+    Route::post('results', 'ResultsController@results');
+
+    /* Admin */
+
+    Route::get('admin/data', 'AdminController@data');
+    Route::get('admin/quizzes', 'QuizController@all_quizzes');
+    Route::post('admin/quizzes', 'QuizController@add_quiz');
+    Route::delete('admin/quizzes', 'QuizController@remove_quiz');
 });

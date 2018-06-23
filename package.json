@@ -19,15 +19,21 @@
         "lodash": "^4.17.4",
         "popper.js": "^1.12",
         "react": "^16.2.0",
-        "react-dom": "^16.2.0"
+        "react-dom": "^16.2.0",
+        "worker-loader": "^2.0.0"
     },
     "dependencies": {
         "autoprefixer": "^8.6.0",
         "chart.js": "^2.7.2",
+        "faker": "^4.1.0",
+        "intl": "^1.2.5",
+        "intl-locales-supported": "^1.0.0",
         "material-ui": "^0.20.0",
         "material-ui-icons": "^1.0.0-beta.36",
         "react-addons-css-transition-group": "^15.6.2",
         "react-chartjs-2": "^2.7.2",
+        "react-js-pagination": "^3.0.2",
+        "react-moment": "^0.7.6",
         "react-router-dom": "^4.2.2"
     }
 }

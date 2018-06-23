@@ -16,9 +16,11 @@ class CreateQuizzes extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 128);
-            $table->string('slug', 128);
+            $table->string('slug', 128)->unique();;
             $table->string('description', 1024);
+            $table->boolean('private');
             $table->integer('category_id')->unsigned()->index();
+            $table->integer('author_id')->unsigned()->index();
             $table->timestamps();
         });
     }

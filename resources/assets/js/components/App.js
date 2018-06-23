@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { AppName, AppMainMenu, ApiURL } from '../utils/AppSettings'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
-import { AppBar, Drawer, MuiThemeProvider, IconButton, FlatButton, Dialog, TextField } from 'material-ui';
+import { HashRouter as Router, Link } from 'react-router-dom'
+import { AppBar, Drawer, MuiThemeProvider, IconButton, FlatButton, Dialog, TextField, DatePicker, RadioButton, RadioButtonGroup } from 'material-ui';
 import { MainMenu } from './App/MainMenu';
 import AppContent from './App/AppContent';
 import { ExitToApp as ExitToAppIcon } from 'material-ui-icons';
-import { showCircullarProgress } from '../utils/AppHelper';
+import { showCircullarProgress, DefaultBirthDate } from '../utils/AppHelper';
+import axios from 'axios';
+import areIntlLocalesSupported from 'intl-locales-supported';
 
 class App extends Component {
     constructor(props) {
@@ -14,11 +16,30 @@ class App extends Component {
         drawerOpen: false, 
         logOutDialogOpen: false, 
         IsAuth: false, 
-        IsLoaded: false
+        IsLoaded: false,
+        loginError: '',
+        registerError: '',
+        selectedRegDateBirth: DefaultBirthDate
       };
       
+      /* login inputs */
       this.login_email_input = React.createRef();
       this.login_pass_input = React.createRef();
+
+      /* register inputs */
+      this.reg_fname_input = React.createRef();
+      this.reg_lname_input = React.createRef();
+      this.reg_email_input = React.createRef();
+      this.reg_pass_input = React.createRef();
+
+      if (areIntlLocalesSupported(['ru', 'ru-RU'])) {
+        this.DateTimeFormat = global.Intl.DateTimeFormat;
+      } else {
+        const IntlPolyfill = require('intl');
+        this.DateTimeFormat = IntlPolyfill.DateTimeFormat;
+        require('intl/locale-data/jsonp/ru');
+        require('intl/locale-data/jsonp/ru-RU');
+      }
     }
   
     toggleDrawerHandler() {
@@ -41,7 +62,7 @@ class App extends Component {
       this.setState({ IsLoaded: false });
       let token = localStorage.getItem('token');
   
-      axios.get(ApiURL + '/logout', {
+      axios.get('api/logout', {
         params: {
           'token': token
         }
@@ -58,31 +79,41 @@ class App extends Component {
       let token = localStorage.getItem('token');
   
       if(token) {
-        axios.get(ApiURL + '/hello', {
+        axios.get('api/auth', {
           params: {
             'token': token
           }
         })
           .then((response) => {
-            this.setState({ IsAuth: true, IsLoaded: true, LoginRegForm: true });
+            if(response.data.success) {
+              localStorage.setItem('token', response.data.token);
+              this.setState({ IsAuth: true, IsLoaded: true, LoginRegForm: true });
+            } else {
+              this.setState({ IsAuth: false, IsLoaded: true, LoginRegForm: true });
+            }              
           })
           .catch((error) => {
             this.setState({ IsAuth: false, IsLoaded: true, LoginRegForm: true });
           });
       } else {
         this.setState({ IsAuth: false, IsLoaded: true, LoginRegForm: true });
-      }    
+      }  
+      
+      axios.get('api/genders')
+        .then((response) => {
+          this.setState({Genders: response.data, SelectedRegGender: response.data[0].id });           
+      })
     }
   
     drawAuthApp() {
       const logOutDialogActions = [
         <FlatButton
-          label="Yes"
+          label="Да"
           primary={ false }
           onClick={ this.logOutHandler.bind(this) }
         />,
         <FlatButton
-          label="No"
+          label="Нет"
           primary={ true }        
           keyboardFocused={ true }
           onClick={ this.closeLogOutDialog.bind(this) }
@@ -103,13 +134,13 @@ class App extends Component {
           </Drawer>
           {/* AppLogOutDialog */}
           <Dialog
-            title="Are you sure?"
+            title="Вы уверены?"
             actions={ logOutDialogActions }
             modal={ false }
             open={ this.state.logOutDialogOpen }
             onRequestClose={ this.closeLogOutDialog.bind(this) }
           >
-            Are you sure you want to Log Out?
+            Вы уверены, что хотите покинуть приложение?
           </Dialog>
           {/* AppContent */}
           <AppContent />
@@ -117,46 +148,142 @@ class App extends Component {
       )
     }
   
-    drawUnAuthApp() {
+    drawUnAuthApp() {      
       return <div className="UnAuthContainer">
         <div>
-          <h1>Welcome to QuizRoom!</h1>
-          { this.state.LoginRegForm ? this.drawLoginForm() : 'Register' }
+          <h1>Добро пожаловать в QuizRoom!</h1>
+          { this.state.LoginRegForm ? this.drawLoginForm() : this.drawRegistrationForm() }          
         </div>
       </div>
     }
+
+    changeLoginRegFormHandler() {
+      this.setState({LoginRegForm: !this.state.LoginRegForm });
+    }
   
     drawApp() {
-      return /* this.state.IsAuth ? this.drawAuthApp() : this.drawUnAuthApp() */ this.drawAuthApp();
+      return this.state.IsAuth ? this.drawAuthApp() : this.drawUnAuthApp();
     }
+
+    /* 
+    * login functions 
+    */
   
     loginFormSubmitHandler(e) {
       e.preventDefault();
       this.setState({ IsLoaded: false });
   
-      axios.post(ApiURL + '/login', {
+      axios.post('api/login', {
         email: this.login_email_input.current.input.value,
         password: this.login_pass_input.current.input.value
       })
         .then((response) => {
-          localStorage.setItem('token', response.data.data.token);
-          this.setState({ IsLoaded: true, IsAuth: true });
+          if(response.data.success) {
+            localStorage.setItem('token', response.data.data.token);
+            this.setState({ IsLoaded: true, IsAuth: true });
+          } else {
+            this.setState({ IsLoaded: true, IsAuth: false, loginError: response.data.error });
+          }          
         })
         .catch((error) => {
-          console.log(error);
-          this.setState({ IsLoaded: true });
+          this.setState({ IsLoaded: true, loginError: 'Что-то пошло не так :(' });
         });
     }
   
     drawLoginForm() {
       return (
-        <form onSubmit={ this.loginFormSubmitHandler.bind(this) }>
-        <TextField ref={this.login_email_input} hintText="E-Mail" floatingLabelText="E-Mail" type="email" required={true} />
-          <TextField ref={this.login_pass_input} hintText="Password" floatingLabelText="Password" type="password" required={true} />
-          <FlatButton label="Signin" type="submit" />
-        </form>
+        <div>
+          <p className="LoginRegError">{this.state.loginError}</p>
+          <form onSubmit={ this.loginFormSubmitHandler.bind(this) }>
+            <TextField ref={this.login_email_input} hintText="E-Mail" floatingLabelText="E-Mail" 
+                      type="email" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      floatingLabelFocusStyle={{ color: '#0098d4' }}/>
+            <TextField ref={this.login_pass_input} hintText="Пароль" floatingLabelText="Пароль" 
+                      type="password" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      floatingLabelFocusStyle={{ color: '#0098d4' }}/>
+            <FlatButton label="Войти" type="submit" />
+            <FlatButton label="Регистрация" type="button" className="loginRegSwitchButton"
+                      onClick={this.changeLoginRegFormHandler.bind(this)} />
+          </form>
+        </div>
       )
     }
+
+    /* 
+    * ----------------------------------------------------------------------
+    */
+
+    /* 
+    * registration functions 
+    */
+  
+   registrationFormSubmitHandler(e) {
+    e.preventDefault();
+    this.setState({ IsLoaded: false });
+
+    axios.post('api/register', {
+      email: this.reg_email_input.current.input.value,
+      password: this.reg_pass_input.current.input.value,
+      first_name: this.reg_fname_input.current.input.value,
+      last_name: this.reg_lname_input.current.input.value,
+      date_of_birth: this.state.selectedRegDateBirth,
+      gender: this.state.SelectedRegGender
+    })
+      .then((response) => {
+        if(response.data.success) {
+          localStorage.setItem('token', response.data.data.token);
+          this.setState({ IsLoaded: true, IsAuth: true });
+        } else {
+          this.setState({ IsLoaded: true, IsAuth: false, loginError: response.data.error });
+        }       
+      })
+      .catch((error) => {
+        this.setState({ IsLoaded: true, loginError: 'Что-то пошло не так :(' });
+      });
+  }
+
+  drawRegistrationForm() {
+    return (
+      <div>
+        <p className="LoginRegError">{this.state.registerError}</p>
+        <form onSubmit={ this.registrationFormSubmitHandler.bind(this) } autoComplete="off">
+          <input type="email" style={{opacity: '0', position: 'absolute'}} />
+          <input type="password" style={{opacity: '0', position: 'absolute'}} />
+          <TextField ref={this.reg_fname_input} hintText="Имя" floatingLabelText="Имя" 
+                    type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                    floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_first_name" autoComplete="off" />
+          <TextField ref={this.reg_lname_input} hintText="Фамилия" floatingLabelText="Фамилия" 
+                    type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                    floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_last_name" autoComplete="off"/>
+          <TextField ref={this.reg_email_input} hintText="E-Mail" floatingLabelText="E-Mail" 
+                    type="email" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                    floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_email" autoComplete="off"/>
+          <TextField ref={this.reg_pass_input} hintText="Пароль (6 или более символов)" floatingLabelText="Пароль (6 или более символов)" 
+                    type="password" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                    floatingLabelFocusStyle={{ color: '#0098d4' }} minLength="6" maxLength="32" name="reg_pass" autoComplete="new-password"/>
+          <div className={ this.props.className ? this.props.className : "RegGendersBirthDate" }>
+              <RadioButtonGroup name="RegGendersButtons" defaultSelected={this.state.Genders[0].id} 
+                                onChange={ (obj, val) => this.setState({SelectedRegGender: val}) } >
+                {this.state.Genders.map((a) => {
+                    return <RadioButton key={a.id} value={a.id} label={a.name} className="RegGenderButton" />
+                })}
+              </RadioButtonGroup>      
+              <DatePicker hintText="Дата рождения" okLabel="OK" cancelLabel="Отмена" 
+                          DateTimeFormat={this.DateTimeFormat} locale="ru" className="BirthDatePicker"
+                          maxDate={ DefaultBirthDate } defaultDate={ DefaultBirthDate }
+                          onChange={ (obj, date) => this.setState({selectedRegDateBirth: date}) } />                       
+          </div>
+          <FlatButton label="Зарегистрироваться" type="submit" />
+          <FlatButton label="Я уже зарегистрирован" type="button" className="loginRegSwitchButton"
+                    onClick={this.changeLoginRegFormHandler.bind(this)} />
+        </form>
+      </div>
+    )
+  }
+
+  /* 
+  * ----------------------------------------------------------------------
+  */
   
     render() {
       return (

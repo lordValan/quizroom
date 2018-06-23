@@ -14,7 +14,7 @@ class AvatarController extends Controller
         } else {
             $gender = JWTAuth::parseToken()->toUser()->info->gender->id;
 
-            return Avatar::all()->where('gender_id', $gender);;
+            return Avatar::all()->where('gender_id', $gender);
         }        
     }
 }

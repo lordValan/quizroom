@@ -1,133 +1,713 @@
-@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+@import url(https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;
 
-:root {  
-  --primary-color: #0098d4;
-  --primary-font-color: #3a3a3a;
-  --primary-border-blocks-color: #f3f3f3;
-  --breakpoint-xs: 0;
-  --breakpoint-sm: 576px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 992px;
-  --breakpoint-xl: 1200px;
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+subset=latin-ext);@charset "UTF-8";
+
+.UnAuthContainer form > button,
+.AppContent .ProfileEditorForm > button {
+  background-color: #0098d4 !important;
+  color: #fff !important;
+  min-width: 50% !important;
+  margin: 30px auto 10px !important;
+  -webkit-transition: background-color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
 }
 
-/* variables */
+.UnAuthContainer form > button:not(:disabled):hover,
+.AppContent .ProfileEditorForm > button:not(:disabled):hover {
+  background-color: #08b9ff !important;
+}
+
+.UnAuthContainer form > button:disabled,
+.AppContent .ProfileEditorForm > button:disabled {
+  opacity: 0.5;
+}
+
+.UnAuthContainer form,
+.AppContent .ProfileEditorForm {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.UnAuthContainer form > *:not(button),
+.AppContent .ProfileEditorForm > *:not(button) {
+  width: 100% !important;
+}
+
 /* styles */
+
+body {
+  overflow-x: hidden;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  color: #3a3a3a;
+}
+
 #root {
   width: 100%;
   height: 100vh;
 }
 
 /* CircularLoaderContainer */
+
 .CircularLoaderContainer {
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 /* CircularLoader */
+
 .CircularLoader svg > circle {
-  stroke: var(--primary-color) !important;
+  stroke: #0098d4 !important;
 }
 
 /* UnAuthContainer */
+
 .UnAuthContainer {
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 10px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.UnAuthContainer .LoginRegError {
+  color: red;
+  font-size: 16px;
+}
+
+.UnAuthContainer form > .loginRegSwitchButton {
+  margin: 5px auto !important;
+  background-color: #0073a1 !important;
+}
+
+.UnAuthContainer form > .loginRegSwitchButton:hover {
+  background-color: #004f6e !important;
+}
+
+.UnAuthContainer form .RegGendersBirthDate {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.UnAuthContainer form .RegGendersBirthDate > * {
+  width: 49%;
+}
+
+.UnAuthContainer form .RegGendersBirthDate > .BirthDatePicker {
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton {
+  padding: 5px 0px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton svg:last-of-type {
+  fill: #0098d4 !important;
+}
+
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton > input {
+  bottom: 0;
 }
 
 /* MainAppStyles */
+
 .App {
-  font-family: "Roboto", sans-serif;
-  font-weight: 300;
-  color: var(--primary-font-color);
   width: 100%;
   height: 100%;
 }
 
 .AppBar {
-  background-color: var(--primary-color) !important;
+  background-color: #0098d4 !important;
   text-align: center;
 }
+
 .AppBar a {
   color: inherit;
   text-decoration: none;
 }
 
 /* AppMenu */
+
 .AppMenuItem {
   font-weight: 400 !important;
-  color: var(--primary-font-color) !important;
+  color: #3a3a3a !important;
 }
 
 /* AppContent */
+
 .AppContent {
-  width: 70%;
+  width: 768px;
   padding: 50px 0;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  /* UserInfo */
 }
-.AppContent .UserInfo {
-  flex-basis: 25%;
-  margin-right: 5%;
-  height: fit-content;
-  border: 1px solid var(--primary-border-blocks-color);
-  padding: 10px;
-  text-align: center;
-}
-.AppContent .UserInfo .Avatar {
-  width: 150px;
-  height: auto;
-}
-.AppContent .UserInfo .FullName {
-  color: var(--primary-font-color);
-}
+
 .AppContent .ContentBlock {
-  flex-basis: 70%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
   /* MainContent */
 }
+
 .AppContent .ContentBlock .MainContent > .container:first-child .MainContentInfoBlock {
   margin-top: 0;
 }
+
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock {
   margin-top: 25px;
-  outline: 1px solid var(--primary-border-blocks-color);
+  outline: 1px solid #f3f3f3;
 }
+
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Title {
   padding: 10px 20px;
 }
+
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Title > h1 {
   margin: 0;
 }
+
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content {
   padding: 20px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
+
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .Tab {
   background-color: #08b9ff !important;
 }
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container {
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination {
+  list-style-type: none;
+  padding: 0;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 10px auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: flex-end;
-  margin-top: 15px;
 }
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container .button-next > button {
-  background-color: var(--primary-color) !important;
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border: 1px solid #f3f3f3;
+  border-right: none;
+  color: #0098d4;
+  text-decoration: none;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li:last-child a {
+  border-right: 1px solid #f3f3f3;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li.active a {
+  background-color: #0098d4;
+  color: #fff;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li:not(.active) a:hover {
+  background-color: #eee;
+  color: #004f6e;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li.disabled a {
+  background-color: #eee;
+  color: #004f6e;
+  cursor: not-allowed;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock {
+  padding: 10px;
+  border: 1px solid #f3f3f3;
+  margin-bottom: 10px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockTitle {
+  color: #3a3a3a;
+  text-decoration: none;
+  margin-bottom: 10px;
+  display: inline-block;
+  font-size: 24px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockTitle:hover {
+  text-decoration: underline;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow:first-of-type {
+  border-top: 1px solid #f3f3f3;
+  padding-top: 10px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow .Key {
+  font-weight: 600;
+  -ms-flex-preferred-size: 30%;
+      flex-basis: 30%;
+  text-align: right;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow .Value {
+  -ms-flex-preferred-size: 67%;
+      flex-basis: 67%;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter {
+  padding: 10px;
+  border: 1px solid #f3f3f3;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 15px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter > * {
+  margin-right: 15px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter > *:last-child {
+  margin-right: 0;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect {
+  width: 30%;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterButtonSubmit {
+  height: 36px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterButtonSubmit > button {
+  height: 100% !important;
+  color: #f3f3f3;
+  background-color: #0098d4 !important;
+  -webkit-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
 }
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .quiz-buttons-container .button-next > button:disabled {
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterButtonSubmit > button:disabled {
   opacity: 0.5;
+}
+
+.AppContent .QuizTimer {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.AppContent .quiz-buttons-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.AppContent .quiz-buttons-container .button-next > button {
+  background-color: #0098d4 !important;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.AppContent .quiz-buttons-container .button-next > button:disabled {
+  opacity: 0.5;
+}
+
+.AppContent .LastResultsTable a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.AppContent .LastResultsTable a:hover {
+  text-decoration: underline;
+}
+
+.AppContent .MainActivityInfo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.AppContent .MainActivityInfo .InfoItem {
+  -ms-flex-preferred-size: 33.33%;
+      flex-basis: 33.33%;
+  text-align: center;
+}
+
+.AppContent .MainActivityInfo .InfoItem > h3 {
+  font-size: 32px;
+  margin: 10px 0;
+  font-weight: 200;
+}
+
+.AppContent .TableRaiting .CurrentUser {
+  background-color: #f3f3f3;
+  font-weight: 600;
+}
+
+.AppContent .UserInfo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.AppContent .UserInfo .Avatar {
+  -ms-flex-preferred-size: 25%;
+      flex-basis: 25%;
+}
+
+.AppContent .UserInfo .Info {
+  -ms-flex-preferred-size: 70%;
+      flex-basis: 70%;
+}
+
+.AppContent .UserInfo .Info .InfoItem {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 5px 0;
+}
+
+.AppContent .UserInfo .Info .InfoItem .Key {
+  -ms-flex-preferred-size: 25%;
+      flex-basis: 25%;
+  font-weight: 600;
+  text-align: right;
+}
+
+.AppContent .UserInfo .Info .InfoItem .Key::after {
+  content: ': ';
+}
+
+.AppContent .UserInfo .Info .InfoItem .Value {
+  -ms-flex-preferred-size: 70%;
+      flex-basis: 70%;
+}
+
+.AppContent .PreQuiz {
+  text-align: center;
+}
+
+.AppContent .PreQuiz .PreQuizData {
+  margin-bottom: 20px;
+}
+
+.AppContent .PreQuiz .PreQuizData .PreQuizDataItem {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 5px 0;
+}
+
+.AppContent .PreQuiz .PreQuizData .PreQuizDataItem > * {
+  -ms-flex-preferred-size: 49.5%;
+      flex-basis: 49.5%;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+}
+
+.AppContent .PreQuiz .PreQuizData .PreQuizDataItem > .Key {
+  text-align: right;
+  font-weight: 600;
+}
+
+.AppContent .PreQuiz .PreQuizData .PreQuizDataItem > .Key::after {
+  content: ': ';
+}
+
+.AppContent .PreQuiz .PreQuizData .PreQuizDataItem > .Value {
+  text-align: left;
+}
+
+.AppContent .PreQuiz .button-start-quiz > button {
+  background-color: #0098d4 !important;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.AppContent .PreQuiz .button-start-quiz > button:disabled {
+  opacity: 0.5;
+}
+
+.AppContent .ProfileEditorForm > *:not(.Avatars) {
+  width: 50% !important;
+  margin: 0 auto;
+}
+
+.AppContent .ProfileEditorForm .Avatars {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 25px;
+}
+
+.AppContent .ProfileEditorForm .Avatars > .avatar {
+  -ms-flex-preferred-size: 20%;
+      flex-basis: 20%;
+  margin: 10px 1.5%;
+  border-radius: 5%;
+  cursor: pointer;
+  border: 5px solid transparent;
+  position: relative;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.AppContent .ProfileEditorForm .Avatars > .avatar.chosen-avatar {
+  border-color: #0098d4;
+}
+
+.AppContent .ProfileEditorForm .Avatars > .avatar.chosen-avatar::after {
+  content: '\2714';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  font-size: 5em;
+  color: #0098d4;
+}
+
+.AppContent .TableQuizzesManagemet a {
+  color: #000;
+}
+
+.AppContent .TableQuizzesManagemet a:hover {
+  text-decoration: none;
+}
+
+.AppContent .AdminQuizzes .AdminQuizzesHead {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .Page {
+  margin-right: 10px;
+}
+
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .PageNumTF {
+  max-width: 80px;
+}
+
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .PageNumTF > input {
+  text-align: center !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm {
+  padding: 5px 20px;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .FormRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .FormRow > * {
+  -ms-flex-preferred-size: 49%;
+      flex-basis: 49%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .FormRow > .Description {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .ButtonContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin: 10px 0;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .ButtonContainer .NextFinishButton {
+  margin-left: 15px !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .ButtonContainer .NextFinishButton > button {
+  background-color: #0098d4 !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #f3f3f3;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table,
+.AppContent .EditQuizStepper .EditQuizForm .Question tr,
+.AppContent .EditQuizStepper .EditQuizForm .Question td {
+  border: 1px solid #f3f3f3;
+  border-collapse: collapse;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table {
+  width: 100%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table td {
+  padding: 0 10px;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table .ColIndex,
+.AppContent .EditQuizStepper .EditQuizForm .Question table .ColBtns,
+.AppContent .EditQuizStepper .EditQuizForm .Question table .ColRight {
+  width: 10%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table .ColIndex {
+  font-size: 24px;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question table .ColText > .TF {
+  width: 100% !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question .QuestionHead .ColText {
+  width: 80%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question .QuestionAnswers {
+  margin: 10px auto;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question .QuestionAnswers .ColText {
+  width: 70%;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question .QuestionAnswers .ColRight span {
+  left: 0 !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .Question .QuestionAnswers .ColRight .RightCheck svg:last-of-type {
+  fill: #0098d4 !important;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .AnswersButtonContainer,
+.AppContent .EditQuizStepper .EditQuizForm .QuestionsButtonContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+.AppContent .EditQuizStepper .EditQuizForm .QuestionsButtonContainer {
+  padding-bottom: 5px;
 }
 
 .fade-enter {
@@ -136,6 +716,7 @@
 
 .fade-enter.fade-enter-active {
   opacity: 1;
+  -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 
@@ -145,6 +726,7 @@
 
 .fade-leave.fade-leave-active {
   opacity: 0;
+  -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 
@@ -154,18 +736,26 @@
 
 .fade-appear.fade-appear-active {
   opacity: 1;
+  -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 
 .quiz-answer {
   padding: 15px 20px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   border-top: 1px solid #eee;
 }
+
 .quiz-answer svg:last-of-type {
-  fill: var(--primary-color) !important;
+  fill: #0098d4 !important;
+}
+
+.quiz-answer > input {
+  bottom: 0;
 }
 
 .quiz-answer:hover {
   background-color: #eefbfe;
 }
+

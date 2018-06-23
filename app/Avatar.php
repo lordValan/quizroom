@@ -16,6 +16,10 @@ class Avatar extends Model
         return $this->belongsTo('App\Gender');
     }
 
+    public static function avatarsByGender($gender_id) {
+        return Avatar::all()->where('gender_id', $gender_id)->values();
+    }
+
     public function toArray() {
         $data = parent::toArray();
 

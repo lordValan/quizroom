@@ -7,7 +7,7 @@ class SimpleAnswerOptions extends Component {
             <div className={ this.props.className ? this.props.className : "SimpleAnswerOptions" }>
                 <RadioButtonGroup name="shipSpeed" onChange={ this.props.onSet } >
                     {this.props.options.map((a) => {
-                        return <RadioButton key={a.id} value={a.id} label={a.value} className="quiz-answer" />
+                        return <RadioButton key={a.id} value={a.id} label={a.text} className="quiz-answer" />
                     })}
                 </RadioButtonGroup>                             
             </div>

@@ -6,10 +6,10 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class Question extends Component {
     renderQuestion() {
-        if(this.props.question.isMultiple){
-            return <MultipleAnswerOptions options={this.props.question.options} onSet={ this.props.onMultipleSet } />
+        if(this.props.question.is_multiple){
+            return <MultipleAnswerOptions options={this.props.question.answers} onSet={ this.props.onMultipleSet } />
         } else {
-            return <SimpleAnswerOptions options={this.props.question.options} onSet={ this.props.onSimpleSet } />
+            return <SimpleAnswerOptions options={this.props.question.answers} onSet={ this.props.onSimpleSet } />
         }
     }
 
@@ -25,7 +25,7 @@ class Question extends Component {
                     transitionAppear
                     transitionAppearTimeout={500}
                 >                                        
-                    <QuestionHead content={this.props.question.value} />
+                    <QuestionHead content={this.props.question.text} />
                     {this.renderQuestion()}
                 </ReactCSSTransitionGroup>            
             </div>

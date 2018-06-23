@@ -6,7 +6,7 @@ class MultipleAnswerOptions extends Component {
         return (
             <div className={ this.props.className ? this.props.className : "MultipleAnswerOptions" }>
                 {this.props.options.map((a) => {
-                    return <Checkbox key={a.id} value={a.id} label={a.value} className="quiz-answer" 
+                    return <Checkbox key={a.id} value={a.id} label={a.text} className="quiz-answer" 
                         onCheck={ this.props.onSet } />
                 })}                          
             </div>

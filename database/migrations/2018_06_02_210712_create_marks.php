@@ -15,7 +15,7 @@ class CreateMarks extends Migration
     {
         Schema::create('marks', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('name', 1);
+            $table->char('name', 1)->unique();
             $table->integer('min_score');
             $table->integer('max_score');
             $table->timestamps();
