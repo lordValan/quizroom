@@ -18,7 +18,7 @@ Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@login');
 Route::get('genders', 'GenderController@genders');
 
-Route::group(['middleware' => ['jwt.auth', 'force.ssl']], function() {
+Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('logout', 'AuthController@logout');
     Route::get('auth', 'AuthController@is_auth');
 
