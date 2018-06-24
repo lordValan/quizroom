@@ -31,7 +31,7 @@ class Quiz extends Component {
         let slug = this.props.parent_props.match.params.quiz;
         this.timer_worker = undefined;
         
-        axios.get('api/quizzes/' + slug, {
+        axios.get('api/quizzes' + slug, {
           params: {
             'token': token
           }
