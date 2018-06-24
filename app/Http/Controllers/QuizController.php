@@ -105,11 +105,11 @@ class QuizController extends Controller
     }
 
     private function publicQuizzes() {
-        return Quiz::all()->where('private', '0')->values();
+        return Quiz::where('private', '0')->get();
     }
 
     private function privateQuizzes() {
-        return Quiz::all()->where('private', '1')->values();
+        return Quiz::where('private', '1')->get();
     }
 
     private function getFilteredQuizzes($categories, $sortBy, $curr_page, $data) {
