@@ -12,7 +12,7 @@ class Result extends Component {
     componentDidMount() {
       let token = localStorage.getItem('token');
       
-      axios.post('/api/results', {
+      axios.post('api/results', {
         'token': token,
         'answers': this.props.answers,
         'quizId': this.props.quizId,

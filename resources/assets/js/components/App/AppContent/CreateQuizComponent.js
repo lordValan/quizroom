@@ -15,7 +15,7 @@ class CreateQuizComponent extends Component {
     componentDidMount() {
         let token = localStorage.getItem('token');
         
-        axios.get('api/admin/data/', {
+        axios.get('api/admin/data', {
           params: {
             'token': token
           }
