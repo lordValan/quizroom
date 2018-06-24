@@ -90,7 +90,7 @@ class Quiz extends Model
             return response()->json(['success' => false, 'error'=> $validator->messages()->first()]);
         }
 
-        if(count(Quiz::all()->where('slug', $request->quiz['slug'])) > 0) {
+        if(count(Quiz::where('slug', $request->quiz['slug'])->get()) > 0) {
             return response()->json(['success' => false, 'error'=> 'Тест с таким идентификатором уже существует!']);
         }
 

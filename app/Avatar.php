@@ -17,7 +17,7 @@ class Avatar extends Model
     }
 
     public static function avatarsByGender($gender_id) {
-        return Avatar::all()->where('gender_id', $gender_id)->values();
+        return Avatar::where('gender_id', $gender_id)->get();
     }
 
     public function toArray() {

@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         $birth = new DateTime($request->date_of_birth);
         $gender_avatars = Avatar::where('gender_id', $request->gender)->get();
-        $avatar_id = count($gender_avatars) > 0 ? $gender_avatars->first()->id : Avatar::all()->first()->id;
+        $avatar_id = count($gender_avatars) > 0 ? $gender_avatars->first()->id : Avatar::all()->take(1)->get()->first()->id;
        
         $info_arr = array(
             'user_id' => $user->id,
