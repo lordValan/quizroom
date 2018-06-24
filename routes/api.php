@@ -61,4 +61,4 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('admin/quizzes', 'QuizController@all_quizzes');
     Route::post('admin/quizzes', 'QuizController@add_quiz');
     Route::delete('admin/quizzes', 'QuizController@remove_quiz');
-})->middleware(HttpsProtocol::class);
+});

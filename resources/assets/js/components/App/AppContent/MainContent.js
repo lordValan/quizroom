@@ -21,7 +21,7 @@ class MainContent extends Component {
     componentDidMount() {
         let token = localStorage.getItem('token');
         
-        axios.get('api/user----', {
+        axios.get('api/user', {
           params: {
             'token': token
           }
