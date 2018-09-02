@@ -8,9 +8,11 @@
         <title>QuizRoom</title>
         <link href="{{asset('css/normalize.css')}}" rel="stylesheet" type="text/css">
         <link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css">
+        <link rel="icon" href="{{asset('img/icon.png')}}" type="image/png">
     </head>
     <body>
         <div id="root"></div>
-        <script src="{{asset('js/app.js')}}" ></script>
+        <script>window.asset_url="{{asset('img/')}}"</script>
+        <script src="{{asset('js/app.js')}}" ></script>        
     </body>
 </html>

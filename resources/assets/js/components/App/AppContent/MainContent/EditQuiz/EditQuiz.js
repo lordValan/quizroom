@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Step, Stepper, StepLabel, TextField, RaisedButton, FlatButton, 
             Dialog, Toggle, SelectField, MenuItem } from 'material-ui';
-import { RecoverSlug, NewQuestionTemplate, NewAnswerTemplate, showCircullarProgress } from '../../../../../utils/AppHelper';
+import { RecoverSlug, NewQuestionTemplate, NewAnswerTemplate, showCircullarProgress, capitalizeFirstLetter } from '../../../../../utils/AppHelper';
 import EditQuestion from './EditQuestion';
 import { withRouter } from 'react-router-dom';
 
@@ -16,8 +16,13 @@ class EditQuiz extends Component {
         groups: props.groups,
         alertDialogOpen: false,
         alertDialogMessage: '',
-        isLoaded: true
+        isLoaded: true,
+        newCategoryDialogOpen: false, 
       };   
+
+      this.slug_input = React.createRef();
+      this.new_cat_input = React.createRef();
+      this.catCounter = 0;
     };
 
     /* first step start */
@@ -33,6 +38,7 @@ class EditQuiz extends Component {
     firstStepContent() {
         return (
             <form className="EditQuizForm" onSubmit={this.firstStepSubmit.bind(this)}>
+                {this.drawNewCategoryDialog()}
                 <div className="FormRow">
                     <TextField hintText="Название" floatingLabelText="Название" 
                       type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
@@ -43,7 +49,8 @@ class EditQuiz extends Component {
                       type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
                       floatingLabelFocusStyle={{ color: '#0098d4' }}
                       defaultValue={this.state.quiz.slug}
-                      onBlur={(e) => this.firstStepTFBlurHandler(e, 'slug') } />
+                      onBlur={(e) => this.firstStepTFBlurHandler(e, 'slug') } 
+                      ref={this.slug_input} />
                 </div>
                 <div className="FormRow">
                     <TextField hintText="Описание" floatingLabelText="Описание" className="Description" 
@@ -53,15 +60,17 @@ class EditQuiz extends Component {
                       onBlur={(e) => this.firstStepTFBlurHandler(e, 'description') } />
                 </div>
                 <div className="FormRow">
-                    <Toggle label="Приватный" toggled={this.state.quiz.private} 
+                    <Toggle label="Приватный" toggled={this.state.quiz.private == true ? true : false} 
                         trackSwitchedStyle={{backgroundColor: '#0098d4'}}
                         thumbSwitchedStyle={{backgroundColor: '#2a92f5'}}
-                        onToggle={this.privateToggleHandler.bind(this)} />
+                        onToggle={this.privateToggleHandler.bind(this)}
+                        style={{width: '49%'}} />
                     <SelectField hintText="Категория" value={this.state.quiz.category_id} floatingLabelText="Категория"
                             onChange={this.choseCategoryHandler.bind(this)} autoWidth={true} className="CategorySelect"
                             selectedMenuItemStyle={{color: '#0098d4'}}
                             underlineFocusStyle={{borderColor: '#0098d4'}}
                             maxHeight={200} >
+                        <MenuItem key="new_category_item" value="new_category_item" primaryText="**Новая категория**" />
                         {this.categoryItems()}
                     </SelectField>
                 </div>
@@ -75,7 +84,7 @@ class EditQuiz extends Component {
 
     privateToggleHandler(e, checked) {
         let quiz = Object.assign({}, this.state.quiz);
-        quiz.private = checked;
+        quiz.private = checked == true ? 1 : 0;
 
         this.setState({quiz: quiz});
     }
@@ -88,9 +97,48 @@ class EditQuiz extends Component {
 
     choseCategoryHandler(event, index, value) {
         let quiz = JSON.parse(JSON.stringify(this.state.quiz)); 
-        quiz.category_id = value;
+
+        if(value === "new_category_item") {
+            this.setState({newCategoryDialogOpen: true});
+        } else {
+            quiz.category_id = value;
+        }
 
         this.setState({quiz: quiz});
+    }
+
+    drawNewCategoryDialog() {
+        const newCategoryDialogActions = [
+            <FlatButton
+              label="Ок"
+              primary={ false }
+              onClick={ this.createNewCatHandler.bind(this) }
+            />,
+            <FlatButton
+              label="Отмена"
+              primary={ true }        
+              keyboardFocused={ true }
+              onClick={ this.closeNewCategoryDialog.bind(this) }
+            />      
+        ];
+
+        return <Dialog
+            title="Новая категория"
+            actions={ newCategoryDialogActions }
+            modal={ false }
+            open={ this.state.newCategoryDialogOpen }
+            onRequestClose={ this.closeNewCategoryDialog.bind(this) }
+          >
+            <p>Введите название новой категории</p>
+            <TextField hintText="Название" floatingLabelText="Название" className="CatName" 
+                      required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      floatingLabelFocusStyle={{ color: '#0098d4' }}
+                      ref={this.new_cat_input} />
+        </Dialog>
+    }
+
+    closeNewCategoryDialog() {
+        this.setState({newCategoryDialogOpen: false});
     }
 
     choseGroupHandler(event, index, values) {
@@ -98,6 +146,28 @@ class EditQuiz extends Component {
         quiz.groups = values;
 
         this.setState({quiz: quiz});
+    }
+
+    createNewCatHandler() {
+        let value = this.new_cat_input.current.input.value;
+
+        if(value.trim().length > 0) {
+            let id = 'new_category' + this.catCounter++,
+                quiz = JSON.parse(JSON.stringify(this.state.quiz))
+                value = capitalizeFirstLetter(value); 
+
+            this.state.categories.push({
+                'id': id,
+                'name': value,
+                'slug': RecoverSlug(value)
+            });
+
+            quiz.category_id = id;
+            this.closeNewCategoryDialog();
+            this.setState({quiz: quiz});
+        } else {
+            this.new_cat_input.current.focus();
+        }
     }
 
     groupsItems() {
@@ -123,15 +193,17 @@ class EditQuiz extends Component {
     firstStepTFBlurHandler(e, action) {
         const val = e.target.value;
         let quiz = JSON.parse(JSON.stringify(this.state.quiz)); 
+        let trans = RecoverSlug(val);
 
         switch(action) {
-            case 'slug':
-                let trans = RecoverSlug(val);
+            case 'slug':                
                 e.target.value = trans;
                 quiz.slug = trans;
                 break;
             case 'name':
                 quiz.name = val;
+                this.slug_input.current.input.value = trans;
+                quiz.slug = trans;
                 break;
             case 'description':
                 quiz.description = val;
@@ -139,7 +211,7 @@ class EditQuiz extends Component {
             default: 
                 break;
         }
-
+        
         this.setState({quiz: quiz});        
     }
 
@@ -265,6 +337,10 @@ class EditQuiz extends Component {
         let quiz = JSON.parse(JSON.stringify(this.state.quiz));  
 
         quiz.questions[question_index].answers[answer_index].text = new_text;
+        var coord = window.pageYOffset;
+        setTimeout(() => {
+            window.scroll(0, coord);
+        }, 40);
 
         this.setState({quiz: quiz});
     }
@@ -272,7 +348,7 @@ class EditQuiz extends Component {
     changeAnswerRightHandler(question_index, answer_index, right) {
         let quiz = JSON.parse(JSON.stringify(this.state.quiz)); 
 
-        quiz.questions[question_index].answers[answer_index].is_right = right;
+        quiz.questions[question_index].answers[answer_index].is_right = right == true ? 1 : 0;
 
         this.setState({quiz: quiz});
     }
@@ -309,7 +385,7 @@ class EditQuiz extends Component {
     }
 
     secondStepSubmit(e) {
-        e.preventDefault();
+        e.preventDefault();        
         
         if(!this.validateQuizQuestions()) {
             return false;
@@ -323,9 +399,19 @@ class EditQuiz extends Component {
         const token = localStorage.getItem('token');
         this.setState({isLoaded: false});
 
-        axios.post('api/admin/quizzes', { 
+        let cat = this.state.categories.filter((cat) => {
+            return cat.id === this.state.quiz.category_id;
+        });
+
+        if(cat.length === 0){
+            this.showAlertDialog('Необходимо выбрать категорию!');
+            return false;
+        }  
+
+        axios.post(this.props.finishRoute, { 
             'token': token,
-            'quiz': this.state.quiz
+            'quiz': this.state.quiz,
+            'cat_obj': cat[0]
         })
         .then((response) => {
             this.setState({isLoaded: true});
@@ -336,8 +422,8 @@ class EditQuiz extends Component {
           }          
         })
         .catch((error) => {
-        this.setState({isLoaded: true});
-          this.showAlertDialog(error.message);
+            this.setState({isLoaded: true});
+            this.showAlertDialog(error.message);
         });    
     }
 

@@ -9,14 +9,15 @@ class Quizzes extends Component {
     constructor(props) {
       super(props);
       this.token = localStorage.getItem('token');
-      this.state = { IsLoaded: false, chosenFilterCategories: [], chosenSortItem: '', IsQuizzesLoading: false };
+      this.state = { IsLoaded: false, chosenFilterCategories: [], chosenSortItem: '', IsQuizzesLoading: false, s: null };
     }
 
     componentDidMount() {
       axios.get(this.props.route, {
         params: {
           'token': this.token,
-          'page': 1
+          'page': 1,
+          's': this.state.s
         }
       })
       .then((response) => {
@@ -43,6 +44,7 @@ class Quizzes extends Component {
           'token': this.token,
           'filterCats': this.state.chosenFilterCategories,
           'sortItem': this.state.chosenSortItem,
+          's': this.state.s,
           'page': 1
         }
       })
@@ -66,6 +68,7 @@ class Quizzes extends Component {
           'token': this.token,
           'filterCats': this.state.chosenFilterCategories,
           'sortItem': this.state.chosenSortItem,
+          's': this.state.s,
           'page': page
         }
       })
@@ -88,13 +91,23 @@ class Quizzes extends Component {
       );
     }
 
+    searchFieldBlurHandler(e) {
+      const val = e.target.value;
+
+      this.setState({
+        s: val.length > 0 ? val : null
+      });
+    }
+
     drawComponent() {
       return ( <div>
           <QuizFilter chosenFilterCategories={this.state.chosenFilterCategories} 
                       choseFilterCategoryHandler={this.filterCategoryChoseHandler.bind(this)}
                       choseSortItemHandler={this.sortItemChoseHandler.bind(this)}
                       chosenSortItem={this.state.chosenSortItem} 
-                      filterSubmit={this.filterSubmit.bind(this)}/>
+                      filterSubmit={this.filterSubmit.bind(this)}
+                      s={this.state.s}
+                      searchFieldBlurHandler={this.searchFieldBlurHandler.bind(this)} />
           { this.state.totalQuizzes > 0 ? this.quizzesPart() : <p>{this.props.emptyMessage}</p> }
         </div>   
       );

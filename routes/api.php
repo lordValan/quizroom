@@ -29,6 +29,7 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     /* Users */
 
     Route::get('user', 'UserController@user');
+    Route::get('user/quizzes', 'UserController@quizzes');
     Route::get('user/info', 'UserController@user_info');
     Route::get('user/invitations', 'QuizController@user_invitations');
     Route::get('user/profile', 'UserController@profile');
@@ -45,6 +46,7 @@ Route::group(['middleware' => ['jwt.auth']], function() {
 
     Route::get('quizzes', 'QuizController@quizzes');
     Route::get('quizzes/{quiz}', 'QuizController@quiz');
+    Route::get('quizzes/{quiz}/results', 'QuizController@quiz_results');
 
     /* Marks */
 
@@ -59,6 +61,13 @@ Route::group(['middleware' => ['jwt.auth']], function() {
 
     Route::get('admin/data', 'AdminController@data');
     Route::get('admin/quizzes', 'QuizController@all_quizzes');
-    Route::post('admin/quizzes', 'QuizController@add_quiz');
+    Route::post('admin/quizzes/create', 'QuizController@add_quiz');
+    Route::post('admin/quizzes/edit', 'QuizController@edit_quiz');
     Route::delete('admin/quizzes', 'QuizController@remove_quiz');
+    Route::get('admin/groups', 'AdminController@all_groups');
+    Route::get('admin/users', 'AdminController@users');
+    Route::get('admin/groups/{group}', 'AdminController@group');
+    Route::delete('admin/groups', 'AdminController@remove_group');
+    Route::post('admin/groups/edit', 'AdminController@edit_group');
+    Route::post('admin/groups/create', 'AdminController@add_group');
 });

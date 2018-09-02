@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { showCircullarProgress } from '../../../../../utils/AppHelper';
 import { SortItems } from '../../../../../utils/AppSettings';
 import axios from 'axios';
-import { SelectField, MenuItem, IconButton }  from 'material-ui';
+import { SelectField, MenuItem, IconButton, TextField }  from 'material-ui';
 import { Search as SearchIcon } from 'material-ui-icons';
 
 
@@ -54,7 +54,7 @@ class QuizFilter extends Component {
     renderComponent() {
         return (
             <div className="QuizFilter">
-                <SelectField multiple={true} hintText="Выберите категорию" value={this.props.chosenFilterCategories} 
+                <SelectField multiple={true} hintText="Категория" value={this.props.chosenFilterCategories} 
                             onChange={this.props.choseFilterCategoryHandler} autoWidth={true} className="FilterSelect"
                             selectedMenuItemStyle={{color: '#0098d4'}} maxHeight={200}>
                     {this.categoryItems(this.props.chosenFilterCategories)}
@@ -64,6 +64,9 @@ class QuizFilter extends Component {
                             selectedMenuItemStyle={{color: '#0098d4'}}>
                     {this.sortItems()}
                 </SelectField>
+                <TextField type="text" name="search" placeholder="Название" underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      className="SearchQuizTF" defaultValue={this.props.s ? this.props.s : ''} className="FilterSelect"
+                      onBlur={this.props.searchFieldBlurHandler} />
                 <IconButton tooltip="Искать" onClick={this.props.filterSubmit} ><SearchIcon/></IconButton>
             </div>
         );

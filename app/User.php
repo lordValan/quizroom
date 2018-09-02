@@ -19,7 +19,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'admin'
+        'email', 'password', 'admin', 'superadmin'
     ];
 
     /**
@@ -57,7 +57,11 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function created_quizzes(){
-        return $this->hasMany('App\Quiz', 'foreign_key', 'author_id');
+        return $this->hasMany('App\Quiz', 'author_id');
+    }
+
+    public function created_groups(){
+        return $this->hasMany('App\Group', 'creator_id');
     }
 
     public function results(){
@@ -75,6 +79,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function is_admin() {
         return $this->admin ? true : false;
+    }
+
+    public function is_superadmin() {
+        return $this->superadmin ? true : false;
     }
 
     public static function sorted_by_rating() {
@@ -260,6 +268,7 @@ class User extends Authenticatable implements JWTSubject
             $data['average_and_passed_by_last_five_months'] = $this->average_and_passed_by_last_five_months();
             $data['table_position'] = $this->table_position();
             $data['table_raiting'] = $this->table_raiting();
+            $data['status'] = $this->is_admin() ? ( $this->is_superadmin() ? 'Администратор' : 'Создатель') : 'Пользователь';
         }
 
         return $data;

@@ -43,7 +43,7 @@ class MainContent extends Component {
                                         days_at_site={this.state.UserData.days_at_site}
                                         groups={this.state.UserData.groups} 
                                         register_date={this.state.UserData.register_date} 
-                                        isAdmin={this.state.UserData.admin} />}                                         
+                                        status={this.state.UserData.status} />}                                         
                                         BgColor="#f9ffdb" /> 
                 <MainContentInfoBlock Title="Статистика" Content={<MainActivityInfo 
                                         tests_count={this.state.UserData.passed_tests_count}

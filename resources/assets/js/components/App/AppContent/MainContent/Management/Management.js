@@ -8,7 +8,7 @@ import { imagesUrl } from '../../../../../utils/AppHelper';
 import { Link } from 'react-router-dom'
 import Moment from 'react-moment';
 import { Lock as LockIcon, LockOpen as LockOpenIcon, Edit as EditIcon, 
-          Close as CloseIcon, Add as AddIcon, Search as SearchIcon } from 'material-ui-icons';
+          Close as CloseIcon, Add as AddIcon, Search as SearchIcon, Group as GroupIcon } from 'material-ui-icons';
 
 class Management extends Component {
     constructor(props) {
@@ -20,16 +20,16 @@ class Management extends Component {
         alertDialogMessage: '',
         removeQuizDialogOpen: false,
         removeQuizDialogMessage: '',
-        removeQuizId: -1
+        removeQuizId: -1,
+        s: null
       };  
-      
-      this.page_num = React.createRef();
     }
 
     componentDidMount() {
       axios.get('api/admin/quizzes', {
         params: {
           'token': this.token,
+          's': this.state.s
         }
       })
       .then((response) => {
@@ -59,7 +59,8 @@ class Management extends Component {
       axios.get('api/admin/quizzes', {
         params: {
           'token': this.token,
-          'page': page
+          'page': page,
+          's': this.state.s
         }
       })
       .then((response) => {
@@ -87,12 +88,17 @@ class Management extends Component {
       return <p className="AdminDenied">Просмотр этой страницы запрещен!</p>
     }
 
-    removeQuizHandler(id) {
+    removeQuizHandler(id) {      
+      this.setState({
+        activePage: 1
+      });
+
       axios.post('api/admin/quizzes', { 
           '_method': 'DELETE',
           'token': this.token,
-          'page': this.state.activePage,
-          'quiz_id': id
+          'page': 1,
+          'quiz_id': id,
+          's': this.state.s
       })
       .then((response) => {
         if(response.data.access) {
@@ -164,7 +170,7 @@ class Management extends Component {
               return (
                 <TableRow key={quiz.id} className="TableQuiz" >
                   <TableRowColumn width="10%">{quiz.id}</TableRowColumn>
-                  <TableRowColumn width="20%"><Link to={'/quizzes/' + quiz.slug}>{quiz.name}</Link></TableRowColumn>
+                  <TableRowColumn width="20%"><Link to={'/management/results/' + quiz.slug}>{quiz.name}</Link></TableRowColumn>
                   <TableRowColumn width="15%">{quiz.author}</TableRowColumn>
                   <TableRowColumn width="10%">{!quiz.private ? <LockOpenIcon /> : <LockIcon />}</TableRowColumn>
                   <TableRowColumn width="20%"><Moment format="DD MMMM YYYY" locale="ru" date={new Date(quiz.created_at)} /></TableRowColumn>
@@ -173,7 +179,7 @@ class Management extends Component {
                     <Link to={'/management/edit/' + quiz.slug}>
                       <IconButton><EditIcon /></IconButton>
                     </Link>
-                    <IconButton onClick={() => this.removeButtonClick(quiz.id, quiz.name)}><CloseIcon /></IconButton>
+                    <IconButton onClick={() => this.removeButtonClick(quiz.id, quiz.name)}><CloseIcon /></IconButton>                    
                   </TableRowColumn>
                 </TableRow>                
               )
@@ -210,26 +216,79 @@ class Management extends Component {
       );
     }
 
-    searchPageHandler() {
-      this.handlePageChange(this.page_num.current.input.value);
-      console.log(this.state.activePage);
+    searchHandler() {
+      this.setState({
+        IsLoaded: false        
+      });
+
+      axios.get('api/admin/quizzes', {
+        params: {
+          'token': this.token,
+          's': this.state.s
+        }
+      })
+      .then((response) => {
+        if(response.data.access) {
+          this.setState( { 
+            Access: true,
+            IsLoaded: true,
+            quizzesData: response.data.data, 
+            activePage: 1
+          } )
+        } else {
+          this.setState( { 
+            Access: false,
+            IsLoaded: true
+          } )
+        }             
+      })
+      .catch((error) => {
+        this.setState( { 
+          Access: false,
+          IsLoaded: true
+        } )
+      });
+    }
+
+    searchFieldBlurHandler(e) {
+      const val = e.target.value;
+
+      this.setState({
+        s: val.length > 0 ? val : null
+      });
     }
 
     quizzesHead() {
       return (
         <div className="AdminQuizzesHead">
           <div className="PagePicker">
-            <span className="Page">Страница </span>
-            <TextField type="number" name="page_num" min="1" max="1000" defaultValue="1" underlineFocusStyle={{ borderColor: '#0098d4' }} 
-                      floatingLabelFocusStyle={{ color: '#0098d4' }} className="PageNumTF" 
-                      ref={this.page_num} />
-            <IconButton tooltip="Перейти" onClick={this.searchPageHandler.bind(this)} ><SearchIcon/></IconButton>
+            <TextField type="text" name="search" placeholder="Название" underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      className="SearchQuizTF" defaultValue={this.state.s ? this.state.s : ''}
+                      onBlur={this.searchFieldBlurHandler.bind(this)} />
+            <IconButton tooltip="Найти" onClick={this.searchHandler.bind(this)} ><SearchIcon/></IconButton>
           </div>
           <Link to="management/create">
             <IconButton tooltip="Создать новый тест"><AddIcon /></IconButton>
           </Link>
+          <Link to={'/management/groups'}>
+              <IconButton tooltip="Управление группами"><GroupIcon /></IconButton>
+          </Link>
         </div>
       );
+    }
+
+    quizzesBody() {
+      return (
+        <div>
+          {this.drawQuizzesTable()}
+          <Pagination className="Pagination" activePage={this.state.activePage} itemsCountPerPage={this.state.quizzesData.page_limit}
+            totalItemsCount={this.state.quizzesData.totalQuizzes} pageRangeDisplayed={5} onChange={this.handlePageChange.bind(this)} />
+        </div>
+      );
+    }
+
+    quizzesEmpty() {
+      return <p>Ничего не найдено!</p>
     }
 
     quizzes() {
@@ -237,9 +296,7 @@ class Management extends Component {
         <div className="AdminQuizzes">          
           {this.dialogs()}
           {this.quizzesHead()}
-          {this.drawQuizzesTable()}
-          <Pagination className="Pagination" activePage={this.state.activePage} itemsCountPerPage={this.state.quizzesData.page_limit}
-            totalItemsCount={this.state.quizzesData.totalQuizzes} pageRangeDisplayed={5} onChange={this.handlePageChange.bind(this)} />
+          {this.state.quizzesData.quizzes.length > 0 ? this.quizzesBody() : this.quizzesEmpty()}
         </div>
       )
     }

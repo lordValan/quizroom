@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\UserResult;
 use App\Mark;
 use App\Answer;
+use App\Category;
 use App\Question;
 use Validator;
 use Illuminate\Http\Request;
@@ -76,88 +77,178 @@ class Quiz extends Model
         return $res;
     }
 
-    public static function addNewQuizFromRequest(Request $request) { 
+    public static function addNewQuizFromRequest(Request $request) {            
+        $valResult = Quiz::addEditQuizValidateRequest($request);
+
+        if($valResult['success'] == false) {
+            return response()->json($valResult);
+        }
+
+        $user = JWTAuth::parseToken()->toUser();
+
+        if($user->is_admin() == false) {
+            return response()->json(['success' => false, 'error'=> 'Вам запрещен доступ']);
+        }        
+
+        $user_id = $user->id;
+        
+        if(count(Category::where('id', $request->cat_obj['id'])->get()) === 0) {
+            $cat_id = DB::table('categories')->insertGetId([
+                'name' => $request->cat_obj['name'],
+                'slug' => $request->cat_obj['slug'],
+                "created_at" =>  \Carbon\Carbon::now(), 
+                "updated_at" => \Carbon\Carbon::now()
+            ]);
+        } else {
+            $cat_id = $request->quiz['category_id'];
+        }
+
+        if(!$cat_id) {
+            return response()->json(['success' => false, 'error'=> 'Ошибка присваивания категории']);
+        }
+
+        /* insert quiz */
+
+        $quiz_id = DB::table('quizzes')->insertGetId([
+            'name' => $request->quiz['name'],
+            'slug' => $request->quiz['slug'],
+            'description' => $request->quiz['description'],
+            'private' => $request->quiz['private'],
+            'category_id' => $cat_id,
+            'author_id' => $user_id,
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),  
+        ]);     
+        
+        Quiz::addEditQuizInsertNewParts($request, $quiz_id);
+
+        /* end insert */
+        return response()->json([
+            'slug' => $request->quiz['slug'],
+            'success' => true
+        ]);
+    }
+
+    public static function editNewQuizFromRequest(Request $request) {
+        $valResult = Quiz::addEditQuizValidateRequest($request);
+
+        if($valResult['success'] == false) {
+            return response()->json($valResult);
+        }
+
+        $user = JWTAuth::parseToken()->toUser();
+
+        if($user->is_admin() == false) {
+            return response()->json(['success' => false, 'error'=> 'Вам запрещен доступ']);
+        }
+
+        if(count(Category::where('id', $request->cat_obj['id'])->get()) === 0) {
+            $cat_id = DB::table('categories')->insertGetId([
+                'name' => $request->cat_obj['name'],
+                'slug' => $request->cat_obj['slug'],
+                "created_at" =>  \Carbon\Carbon::now(), 
+                "updated_at" => \Carbon\Carbon::now()
+            ]);
+        } else {
+            $cat_id = $request->quiz['category_id'];
+        }
+
+        if(!$cat_id) {
+            return response()->json(['success' => false, 'error'=> 'Ошибка присваивания категории']);
+        }
+
+        $user_id = $user->id;  
+
+        $quiz = Quiz::where('id', $request['quiz']['id'])->firstOrFail();
+
+        $quiz->name = $request['quiz']['name'];
+        $quiz->slug = $request['quiz']['slug'];
+        $quiz->description = $request['quiz']['description'];
+        $quiz->private = $request['quiz']['private'];
+        $quiz->category_id = $cat_id;
+
+        $quiz->save();
+
+        Quiz::removeQuizParts($quiz);
+        Quiz::addEditQuizInsertNewParts($request, $quiz->id);
+
+
+        /* end edit */
+        return response()->json([
+            'slug' => $request->quiz['slug'],
+            'success' => true
+        ]);
+    }
+
+    private static function addEditQuizValidateRequest(Request $request) {
         $validator = Validator::make($request->all(), [
             'quiz.name' => 'required|max:255',
             'quiz.slug' => 'required|max:32',
             'quiz.description' => 'required|max:2048',
             'quiz.private' => 'required',
             'quiz.category_id' => 'required',
-            'quiz.questions' => 'required'
+            'quiz.questions' => 'required',
+            'cat_obj' => 'required'
         ]);
 
         if($validator->fails()) {
-            return response()->json(['success' => false, 'error'=> $validator->messages()->first()]);
+            return ['success' => false, 'error'=> $validator->messages()->first()];
         }
 
-        if(count(Quiz::where('slug', $request->quiz['slug'])->get()) > 0) {
-            return response()->json(['success' => false, 'error'=> 'Тест с таким идентификатором уже существует!']);
+        $quiz_slug = Quiz::where('slug', $request->quiz['slug'])->get();
+
+        if(count($quiz_slug) > 0) {
+            $id = $request['quiz']['id'];
+
+            if($id) {
+                if($quiz_slug->first()->id !== $id) {
+                    return ['success' => false, 'error'=> 'Тест с таким идентификатором уже существует!'];
+                }
+            } else {
+                return ['success' => false, 'error'=> 'Тест с таким идентификатором уже существует!'];
+            }
         }
 
         if(count($request->quiz['questions']) > 25) {
-            return response()->json(['success' => false, 'error'=> 'Вопросов не может быть больше 25!']);
+            return ['success' => false, 'error'=> 'Вопросов не может быть больше 25!'];
         } else if(count($request->quiz['questions']) < 5) {
-            return response()->json(['success' => false, 'error'=> 'Вопросов не может быть меньше 5!']);
+            return ['success' => false, 'error'=> 'Вопросов не может быть меньше 5!'];
         }
 
-        $user = JWTAuth::parseToken()->toUser();
+        return ['success' => true];
+    }
 
-        if($user->is_admin()) {
-            $user_id = $user->id;            
-
-            /* insert quiz */
-
-            $quiz_id = DB::table('quizzes')->insertGetId([
-                    'name' => $request->quiz['name'],
-                    'slug' => $request->quiz['slug'],
-                    'description' => $request->quiz['description'],
-                    'private' => $request->quiz['private'],
-                    'category_id' => $request->quiz['category_id'],
-                    'author_id' => $user_id,
-                    "created_at" =>  \Carbon\Carbon::now(), 
-                    "updated_at" => \Carbon\Carbon::now(),  
+    private static function addEditQuizInsertNewParts(Request $request, $quiz_id) {
+        foreach($request->quiz['questions'] as $question) {
+            $question_id = DB::table('questions')->insertGetId([
+                'text' => $question['text'],
+                'extra_text' => '',
+                'quiz_id' => $quiz_id,                
+                "created_at" =>  \Carbon\Carbon::now(), 
+                "updated_at" => \Carbon\Carbon::now(),  
             ]);
 
-            foreach($request->quiz['questions'] as $question) {
-                $question_id = DB::table('questions')->insertGetId([
-                    'text' => $question['text'],
-                    'extra_text' => '',
-                    'quiz_id' => $quiz_id,                
+            foreach($question['answers'] as $answer) {
+                DB::table('answers')->insert([
+                    'text' => $answer['text'],
+                    'question_id' => $question_id,  
+                    'is_right' => $answer['is_right'],              
                     "created_at" =>  \Carbon\Carbon::now(), 
                     "updated_at" => \Carbon\Carbon::now(),  
                 ]);
-
-                foreach($question['answers'] as $answer) {
-                    DB::table('answers')->insert([
-                        'text' => $answer['text'],
-                        'question_id' => $question_id,  
-                        'is_right' => $answer['is_right'],              
-                        "created_at" =>  \Carbon\Carbon::now(), 
-                        "updated_at" => \Carbon\Carbon::now(),  
-                    ]);
-                }
             }
-
-            if($request->quiz['private']){
-                foreach($request->quiz['groups'] as $group_id) {
-                    DB::table('quizzes_groups')->insert([
-                        'quiz_id' => $quiz_id,
-                        'group_id' => $group_id,               
-                        "created_at" =>  \Carbon\Carbon::now(), 
-                        "updated_at" => \Carbon\Carbon::now(),  
-                    ]);
-                }
-            }             
-
-            /* end insert */
-
-            return array(
-                'slug' => $request->quiz['slug'],
-                'success' => true
-            );
-        } else {
-            return response()->json(['success' => false, 'error'=> 'Вам запрещен доступ']);
         }
+
+        if($request->quiz['private']){
+            foreach($request->quiz['groups'] as $group_id) {
+                DB::table('quizzes_groups')->insert([
+                    'quiz_id' => $quiz_id,
+                    'group_id' => $group_id,               
+                    "created_at" =>  \Carbon\Carbon::now(), 
+                    "updated_at" => \Carbon\Carbon::now(),  
+                ]);
+            }
+        }     
     }
 
     public function average_results() {
@@ -189,8 +280,13 @@ class Quiz extends Model
         return false;
     }
 
-    public function remove() {
-        foreach($this->questions as $question) {
+    public static function remove(Quiz $quiz) {        
+        Quiz::removeQuizParts($quiz);
+        $quiz->delete();
+    }
+
+    private static function removeQuizParts(Quiz $quiz) {
+        foreach($quiz->questions as $question) {
             foreach($question->answers as $answer){
                 $answer->delete();
             }
@@ -198,13 +294,11 @@ class Quiz extends Model
             $question->delete();
         }
 
-        if($this->private) {
-            foreach($this->groups as $group){
+        if($quiz->private) {
+            foreach($quiz->groups as $group){
                 $group->delete();
             }
         }
-
-        $this->delete();
     }
 
     public function toArray() {

@@ -7,7 +7,7 @@ class InvitationsComponent extends Component {
         return  (
             <div className={ this.props.className ? this.props.className : "MainContent" }>
                 <MainContentInfoBlock Title="Приглашения" Content={<Quizzes route="api/user/invitations" 
-                                        emptyMessage="У Вас нет приглашений :(" />} BgColor="#F4F3F2" />
+                                        emptyMessage="Приглашений не найдено!" />} BgColor="#F4F3F2" />
             </div>
         )        
     }

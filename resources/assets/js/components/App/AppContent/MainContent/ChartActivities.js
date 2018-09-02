@@ -135,7 +135,6 @@ export default class ChartActivities extends Component {
     }
   
     render() {
-      console.log();
       return this.props.tests_count > 0 ? this.drawTabs() : this.drawEmpty();
     }
   }

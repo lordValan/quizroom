@@ -39,7 +39,11 @@ export const chartTemplate = {
     }
 };
 
-export const imagesUrl = "https://res.cloudinary.com/hmwb02lcs/image/upload/v1529426386/quizroom/";
+export const imagesUrl = window.asset_url + '/';
+
+export const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 export const SecsToTime = (secs) => {
     let scs = Math.floor(secs);
@@ -86,6 +90,11 @@ export const NewQuizTemplate = {
         Object.assign({}, NewQuestionTemplate)
     ],
     groups: []
+}
+
+export const newGroupTemplate = {
+    'name': 'Новая группа',
+    'users': []
 }
 
 export const RecoverSlug = (text, engToRus) => {

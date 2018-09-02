@@ -59,7 +59,6 @@ class Profile extends Component {
       })
         .then((response) => {
           if(response.data.success) {
-            console.log(response.data);
             this.setState({ IsLoaded: true });
           } else {
             this.setState({ IsLoaded: true });

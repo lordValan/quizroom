@@ -2,6 +2,7 @@
 
 subset=latin-ext);@charset "UTF-8";
 
+
 .UnAuthContainer form > button,
 .AppContent .ProfileEditorForm > button {
   background-color: #0098d4 !important;
@@ -45,6 +46,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   color: #3a3a3a;
+  background-color: #fff;
 }
 
 #root {
@@ -107,6 +109,20 @@ body {
   background-color: #004f6e !important;
 }
 
+.UnAuthContainer form .namesRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.UnAuthContainer form .namesRow > * {
+  -ms-flex-preferred-size: 49%;
+      flex-basis: 49%;
+}
+
 .UnAuthContainer form .RegGendersBirthDate {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -128,17 +144,20 @@ body {
   cursor: pointer;
 }
 
-.UnAuthContainer form .RegGendersBirthDate .RegGenderButton {
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton,
+.UnAuthContainer form .RegGendersBirthDate .RegStatusButton {
   padding: 5px 0px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
 
-.UnAuthContainer form .RegGendersBirthDate .RegGenderButton svg:last-of-type {
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton svg:last-of-type,
+.UnAuthContainer form .RegGendersBirthDate .RegStatusButton svg:last-of-type {
   fill: #0098d4 !important;
 }
 
-.UnAuthContainer form .RegGendersBirthDate .RegGenderButton > input {
+.UnAuthContainer form .RegGendersBirthDate .RegGenderButton > input,
+.UnAuthContainer form .RegGendersBirthDate .RegStatusButton > input {
   bottom: 0;
 }
 
@@ -219,6 +238,9 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .pagination li a {
@@ -262,24 +284,33 @@ body {
 }
 
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock {
-  padding: 10px;
   border: 1px solid #f3f3f3;
   margin-bottom: 10px;
 }
 
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockTitle {
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Head {
+  padding: 10px 25px;
+  border-bottom: 1px solid #f3f3f3;
+  text-align: center;
+  background-color: #0098d42e;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Head .QuizBlockTitle {
   color: #3a3a3a;
   text-decoration: none;
-  margin-bottom: 10px;
   display: inline-block;
   font-size: 24px;
 }
 
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockTitle:hover {
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Head .QuizBlockTitle:hover {
   text-decoration: underline;
 }
 
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow {
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Body {
+  padding: 10px 5px;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Body .QuizBlockRow {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -289,19 +320,14 @@ body {
   margin-bottom: 5px;
 }
 
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow:first-of-type {
-  border-top: 1px solid #f3f3f3;
-  padding-top: 10px;
-}
-
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow .Key {
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Body .QuizBlockRow .Key {
   font-weight: 600;
   -ms-flex-preferred-size: 30%;
       flex-basis: 30%;
   text-align: right;
 }
 
-.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock .QuizBlockRow .Value {
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizBlock > .Body .QuizBlockRow .Value {
   -ms-flex-preferred-size: 67%;
       flex-basis: 67%;
 }
@@ -330,7 +356,23 @@ body {
 }
 
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect {
-  width: 30%;
+  width: 150px !important;
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect input[type="text"]::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect input[type="text"]:-ms-input-placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect input[type="text"]::-ms-input-placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterSelect input[type="text"]::placeholder {
+  color: rgba(0, 0, 0, 0.3);
 }
 
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterButtonSubmit {
@@ -347,6 +389,45 @@ body {
 
 .AppContent .ContentBlock .MainContent .MainContentInfoBlock .Content .QuizFilter .FilterButtonSubmit > button:disabled {
   opacity: 0.5;
+}
+
+.AppContent .Result .ResultContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.AppContent .Result .ResultContainer > .ResultItem {
+  -ms-flex-preferred-size: 33.33%;
+      flex-basis: 33.33%;
+  border: 1px solid #f3f3f3;
+  border-right: none;
+  padding: 20px 0;
+}
+
+.AppContent .Result .ResultContainer > .ResultItem:first-child {
+  border-left: none;
+}
+
+.AppContent .Result .ResultMessage {
+  text-align: center;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.AppContent .Result .ButtonContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.AppContent .Result .ButtonContainer .CloseResult > button {
+  background-color: #0098d4 !important;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .AppContent .QuizTimer {
@@ -425,6 +506,10 @@ body {
       flex-basis: 25%;
 }
 
+.AppContent .UserInfo .Avatar > img {
+  width: 100%;
+}
+
 .AppContent .UserInfo .Info {
   -ms-flex-preferred-size: 70%;
       flex-basis: 70%;
@@ -460,8 +545,18 @@ body {
   text-align: center;
 }
 
+.AppContent .PreQuiz > p:first-of-type {
+  border: 1px solid #f3f3f3;
+  border-left: none;
+  border-right: none;
+  padding: 10px 0;
+  margin: 15px 0;
+}
+
 .AppContent .PreQuiz .PreQuizData {
-  margin-bottom: 20px;
+  border-bottom: 1px solid #f3f3f3;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .AppContent .PreQuiz .PreQuizData .PreQuizDataItem {
@@ -565,6 +660,18 @@ body {
   text-decoration: none;
 }
 
+.AppContent .AdminResults h1 {
+  text-align: center;
+}
+
+.AppContent .AdminResults .TableResultsManagemet {
+  border-top: 1px solid #f3f3f3;
+}
+
+.AppContent .AdminResults .TableResultsManagemet tbody > tr:nth-child(odd) {
+  background-color: #eee;
+}
+
 .AppContent .AdminQuizzes .AdminQuizzesHead {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -587,11 +694,96 @@ body {
   margin-right: 10px;
 }
 
-.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .PageNumTF {
-  max-width: 80px;
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .SearchQuizTF {
+  max-width: 100px;
 }
 
-.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .PageNumTF > input {
+.AppContent .AdminQuizzes .AdminQuizzesHead .PagePicker > .SearchQuizTF > input {
+  text-align: center !important;
+}
+
+.AppContent .EditGroupAdmin .EditGroupTFEditor {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.AppContent .EditGroupAdmin .buttonContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 20px 0;
+}
+
+.AppContent .EditGroupAdmin .buttonContainer .BtSave > button {
+  background-color: #0098d4 !important;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.AppContent .EditGroupAdmin .AdminUsersHead {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.AppContent .EditGroupAdmin .AdminUsersHead .UsersChosenInfo {
+  font-weight: 600;
+}
+
+.AppContent .EditGroupAdmin .AdminUsersHead .UserPicker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.AppContent .EditGroupAdmin .AdminUsersHead .UserPicker > .SearchUserTF {
+  max-width: 100px;
+}
+
+.AppContent .EditGroupAdmin .AdminUsersHead .UserPicker > .SearchUserTF > input {
+  text-align: center !important;
+}
+
+.AppContent .AdminGroups .AdminGroupsHead {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+.AppContent .AdminGroups .AdminGroupsHead .PagePicker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.AppContent .AdminGroups .AdminGroupsHead .PagePicker > .Page {
+  margin-right: 10px;
+}
+
+.AppContent .AdminGroups .AdminGroupsHead .PagePicker > .SearchGroupTF {
+  max-width: 100px;
+}
+
+.AppContent .AdminGroups .AdminGroupsHead .PagePicker > .SearchGroupTF > input {
   text-align: center !important;
 }
 
@@ -710,6 +902,15 @@ body {
   padding-bottom: 5px;
 }
 
+.AppContent .TableEditGroupManagemet tbody > tr {
+  cursor: pointer;
+}
+
+.AppContent .TableEditGroupManagemet tbody > tr.selected,
+.AppContent .TableEditGroupManagemet tbody > tr:hover {
+  background-color: #f3f3f3;
+}
+
 .fade-enter {
   opacity: 0;
 }
@@ -757,5 +958,79 @@ body {
 
 .quiz-answer:hover {
   background-color: #eefbfe;
+}
+
+@media (max-width: 768px) {
+  .AppContent {
+    width: 90%;
+  }
+
+  .UserInfo {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+
+  .UserInfo > * {
+    -ms-flex-preferred-size: 100% !important;
+        flex-basis: 100% !important;
+  }
+
+  .UserInfo > img {
+    margin: 10px auto;
+  }
+
+  .UserInfo > .Info {
+    text-align: center;
+  }
+
+  .UserInfo > .Info > .InfoItem {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+
+  .UserInfo > .Info > .InfoItem > * {
+    -ms-flex-preferred-size: 100% !important;
+        flex-basis: 100% !important;
+  }
+
+  .UserInfo > .Info > .InfoItem > .Key {
+    text-align: center !important;
+  }
+
+  .QuizFilter {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+
+  .QuizFilter > * {
+    margin: auto !important;
+  }
+
+  .QuizBlock .QuizBlockRow {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+
+  .QuizBlock .QuizBlockRow > * {
+    -ms-flex-preferred-size: 100% !important;
+        flex-basis: 100% !important;
+    text-align: center !important;
+  }
+
+  .PreQuizData .PreQuizDataItem {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+
+  .PreQuizData .PreQuizDataItem > * {
+    -ms-flex-preferred-size: 100% !important;
+        flex-basis: 100% !important;
+    text-align: center !important;
+  }
+
+  .Avatars .avatar {
+    -ms-flex-preferred-size: 42% !important;
+        flex-basis: 42% !important;
+  }
 }
 

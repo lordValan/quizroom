@@ -43,7 +43,7 @@ class EditQuestion extends Component {
                                         onBlur={(e) => this.props.changeAnswerText(this.props.index, index, e.target.value)} />                    
                                 </td>
                                 <td className="ColRight">
-                                    <Checkbox checked={answer.is_right} className="RightCheck" 
+                                    <Checkbox checked={answer.is_right == true ? true : false} className="RightCheck" 
                                                 onCheck={ (event, is_checked) => this.props.changeAnswerRight(this.props.index, index, is_checked) } />
                                 </td>
                                 <td className="ColBtns">

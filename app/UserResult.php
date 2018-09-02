@@ -27,7 +27,8 @@ class UserResult extends Model
     private function reduced_user(User $user) {
         $data = array(
             'id' => $user->id,
-            'email' => $user->email
+            'email' => $user->email,
+            'name' => $user->info->first_name . ' ' . $user->info->last_name
         );
 
         return $data;

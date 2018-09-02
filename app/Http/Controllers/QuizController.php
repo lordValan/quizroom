@@ -12,17 +12,25 @@ class QuizController extends Controller
     private $page_limit = 5;
 
     public function quizzes(Request $request) {
-        return $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $this->publicQuizzes());
+        return $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $request->s, $this->publicQuizzes());
     }
 
     public function all_quizzes(Request $request) {
         $user = JWTAuth::parseToken()->toUser();
 
         if($user->is_admin()){
-            return array(
-                'access' => true,
-                'data' => $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, Quiz::all())
-            );
+            if($user->is_superadmin()) {
+                return array(
+                    'access' => true,
+                    'data' => $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $request->s, Quiz::all())
+                );
+            } else {
+                return array(
+                    'access' => true,
+                    'data' => $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $request->s, $user->created_quizzes)
+                );
+            }
+            
         } else {
             return array(
                 'access' => false
@@ -43,7 +51,7 @@ class QuizController extends Controller
             }
         }
 
-        return $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, collect($data));
+        return $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $request->s, collect($data));
     }
 
     public function remove_quiz(Request $request) {
@@ -54,12 +62,12 @@ class QuizController extends Controller
 
             if(count($quiz->results) === 0) {
                 $name = $quiz->name;
-                $quiz->remove();
+                Quiz::remove($quiz);
 
                 return array(
                     'access' => true,
                     'success' => true,
-                    'data' => $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, Quiz::all()),
+                    'data' => $this->getFilteredQuizzes($request->filterCats, $request->sortItem, $request->page, $request->s, Quiz::all()),
                     'message' => 'Тест "' . $name . '" успешно удален!'
                 );
             } else {
@@ -100,8 +108,34 @@ class QuizController extends Controller
         ); 
     }    
 
+    public function quiz_results(Request $request, Quiz $quiz) {
+        $page = $request->curr_page ? $request->curr_page : 1;
+        $per_page = 10;
+        $user = JWTAuth::parseToken()->toUser();
+        $data = $quiz->results->sortByDesc('pass_date');
+
+        if($user->is_admin()){
+            return array(
+                'access' => true,
+                'quiz_results' => $data->forPage($page, $per_page)->values(),
+                'quiz_name' => $quiz->name,
+                'page_limit' => $per_page,
+                'totalResults' => count($data)
+            );             
+        } 
+
+        return array(
+            'access' => false,
+            'message' => 'Вы не имеете доступ к этому тесту'
+        ); 
+    }   
+
     public function add_quiz(Request $request) {
         return Quiz::addNewQuizFromRequest($request);
+    }
+
+    public function edit_quiz(Request $request) {
+        return Quiz::editNewQuizFromRequest($request);
     }
 
     private function publicQuizzes() {
@@ -112,7 +146,7 @@ class QuizController extends Controller
         return Quiz::where('private', '1')->get();
     }
 
-    private function getFilteredQuizzes($categories, $sortBy, $curr_page, $data) {
+    private function getFilteredQuizzes($categories, $sortBy, $curr_page, $name_like, $data) {
         $page = $curr_page ? $curr_page : 1;
 
         $totalCount = count($data);
@@ -141,6 +175,12 @@ class QuizController extends Controller
         /* filter by category if array of categories is set */
         if($categories) {
             $data = $data->whereIn('category_id', $categories);            
+        }
+
+        if($name_like) {
+            $data = $data->filter(function($quiz) use ($name_like) {
+                return mb_stripos($quiz->name, $name_like) !== false;
+            });
         }
 
         $totalCount = count($data);

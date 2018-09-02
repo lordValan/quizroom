@@ -41,6 +41,7 @@ body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     color: $primary-font-color; 
+    background-color: #fff;
 }
 
 #root {
@@ -93,6 +94,15 @@ body {
             }
         }
 
+        .namesRow {
+            display: flex;
+            justify-content: space-between;
+
+            & > * {
+                flex-basis: 49%;
+            }
+        }
+
         .RegGendersBirthDate {
             display: flex;
             justify-content: space-between;
@@ -107,7 +117,7 @@ body {
                 cursor: pointer;
             }
 
-            .RegGenderButton {
+            .RegGenderButton, .RegStatusButton {
                 padding: 5px 0px;
                 box-sizing: border-box;
             
@@ -191,6 +201,7 @@ body {
                         width: fit-content;
                         margin: 10px auto;
                         display: flex;
+                        justify-content: center;
 
                         li {
                             a {
@@ -231,42 +242,46 @@ body {
                     }
                     
                     .QuizBlock {
-                        padding: 10px;
                         border: 1px solid $primary-border-blocks-color;
                         margin-bottom: 10px;
 
-                        .QuizBlockTitle {
-                            color: $primary-font-color;
-                            text-decoration: none;
-                            margin-bottom: 10px;
-                            display: inline-block;
-                            font-size: 24px;
+                        & > .Head {
+                            padding: 10px 25px;
+                            border-bottom: 1px solid $primary-border-blocks-color;
+                            text-align: center;
+                            background-color: #0098d42e;
 
-                            &:hover {
-                                text-decoration: underline;
+                            .QuizBlockTitle {
+                                color: $primary-font-color;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 24px;
+    
+                                &:hover {
+                                    text-decoration: underline;
+                                }
                             }
                         }
+                        
+                        & > .Body {
+                            padding: 10px 5px;
 
-                        .QuizBlockRow {
-                            display: flex;
-                            justify-content: space-between;
-                            margin-bottom: 5px;
-
-                            &:first-of-type {                                
-                                border-top: 1px solid $primary-border-blocks-color;
-                                padding-top: 10px;
+                            .QuizBlockRow {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 5px;
+    
+                                .Key {
+                                    font-weight: 600;
+                                    flex-basis: 30%;
+                                    text-align: right;
+                                }
+    
+                                .Value {
+                                    flex-basis: 67%;
+                                }
                             }
-
-                            .Key {
-                                font-weight: 600;
-                                flex-basis: 30%;
-                                text-align: right;
-                            }
-
-                            .Value {
-                                flex-basis: 67%;
-                            }
-                        }
+                        }                        
                     }
 
                     .QuizFilter {
@@ -286,7 +301,11 @@ body {
                         }
 
                         .FilterSelect {
-                            width: 30%;
+                            width: 150px !important;
+
+                            input[type="text"]::placeholder {
+                                color: rgba(0, 0, 0, 0.3);
+                            }
                         }
 
                         .FilterButtonSubmit {
@@ -309,6 +328,40 @@ body {
             }
         }
     }
+
+    .Result {
+        .ResultContainer {
+            display: flex;
+    
+            & > .ResultItem {
+                flex-basis: 33.33%;
+                border: 1px solid $primary-border-blocks-color;
+                border-right: none;
+                padding: 20px 0;
+    
+                &:first-child {
+                    border-left: none;
+                }
+            }
+        }
+
+        .ResultMessage {
+            text-align: center;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .ButtonContainer {
+            display: flex;
+            justify-content: center;
+
+            .CloseResult > button {
+                background-color: $primary-color!important;
+                transition: opacity 0.3s ease-in-out;
+            }
+        }
+    }
+    
 
     .QuizTimer {
         font-weight: 600;
@@ -371,6 +424,10 @@ body {
 
         .Avatar {
             flex-basis: 25%;
+
+            & > img {
+                width: 100%;
+            }
         }
 
         .Info {
@@ -400,9 +457,19 @@ body {
     
     .PreQuiz {
         text-align: center;
+
+        & > p:first-of-type {
+            border: 1px solid $primary-border-blocks-color;
+            border-left: none;
+            border-right: none;
+            padding: 10px 0;
+            margin: 15px 0;
+        }
         
         .PreQuizData {
-            margin-bottom: 20px;
+            border-bottom: 1px solid $primary-border-blocks-color;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
 
             .PreQuizDataItem {
                 display: flex;
@@ -494,6 +561,21 @@ body {
         }
     }
 
+    .AdminResults {
+        h1 {
+            text-align: center;
+        }
+
+        .TableResultsManagemet {
+            border-top: 1px solid $primary-border-blocks-color;
+    
+            tbody > tr:nth-child(odd) {
+                background-color: #eee;
+            }
+        }
+    }
+    
+
     .AdminQuizzes {
         .AdminQuizzesHead {
             display: flex;
@@ -507,8 +589,8 @@ body {
                     margin-right: 10px;
                 }
 
-                & > .PageNumTF {
-                    max-width: 80px;
+                & > .SearchQuizTF {
+                    max-width: 100px;
 
                     & > input {
                         text-align: center !important;
@@ -517,6 +599,74 @@ body {
                 }
             }
         }        
+    }
+
+    .EditGroupAdmin {
+        .EditGroupTFEditor {
+            padding-bottom: 10px;
+            border-bottom: 1px solid $primary-border-blocks-color;
+        }
+
+        .buttonContainer {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+
+            .BtSave > button {
+                background-color: $primary-color!important;
+                transition: opacity 0.3s ease-in-out;
+            }
+        }        
+
+        .AdminUsersHead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid $primary-border-blocks-color;
+
+            .UsersChosenInfo {
+                font-weight: 600;
+            }
+
+            .UserPicker {
+                display: flex;
+                align-items: center;
+
+                & > .SearchUserTF {
+                    max-width: 100px;
+
+                    & > input {
+                        text-align: center !important;
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    .AdminGroups {
+        .AdminGroupsHead {
+            display: flex;
+            justify-content: flex-end;
+
+            .PagePicker {
+                display: flex;
+                align-items: center;
+
+                & > .Page {
+                    margin-right: 10px;
+                }
+
+                & > .SearchGroupTF {
+                    max-width: 100px;
+
+                    & > input {
+                        text-align: center !important;
+                    }
+                    
+                }
+            }
+        }     
     }
 
     .EditQuizStepper {
@@ -621,6 +771,18 @@ body {
             }
         }
     }
+
+    .TableEditGroupManagemet {
+
+        tbody > tr {
+            cursor: pointer;
+        }
+
+        tbody > tr.selected,
+        tbody > tr:hover {
+            background-color: $primary-border-blocks-color;
+        }
+    }
 }
 
 .fade-enter {
@@ -667,6 +829,77 @@ body {
   .quiz-answer:hover {
       background-color: #eefbfe;
   }
+
+@media (max-width: $md-breakpoint) { 
+    .AppContent {
+        width: 90%;
+    }
+
+    .UserInfo {
+        flex-wrap: wrap;
+
+        & > * {
+            flex-basis: 100% !important;
+        }  
+        
+        & > img {
+            margin: 10px auto;
+        }
+
+        & > .Info {
+            text-align: center;
+
+            & > .InfoItem {
+                flex-wrap: wrap;
+
+                & > * {
+                    flex-basis: 100% !important;
+                }
+
+                & > .Key {
+                    text-align: center !important;
+                }
+            }
+        }
+    }
+
+    .QuizFilter {
+        flex-wrap: wrap;
+
+        & > * {
+            margin: auto !important;
+        }
+    }
+
+    .QuizBlock {
+        .QuizBlockRow {
+            flex-wrap: wrap;
+
+            & > * {
+                flex-basis: 100% !important;
+
+                text-align: center !important;
+            }
+        }
+    }
+
+    .PreQuizData {
+        .PreQuizDataItem {
+            flex-wrap: wrap;
+
+            & > * {
+                flex-basis: 100% !important;
+                text-align: center !important;
+            }
+        }
+    }
+
+    .Avatars {
+        .avatar {
+            flex-basis: 42% !important;
+        }
+    }
+}
 
 
 

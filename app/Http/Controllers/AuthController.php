@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $credentials = $request->only('email', 'password', 'gender', 'first_name', 'last_name', 'date_of_birth');
+        $credentials = $request->only('email', 'password', 'gender', 'first_name', 'last_name', 'status', 'date_of_birth');
         
         $rules = [
             'email' => 'required|email|max:255|unique:users',
@@ -30,8 +30,10 @@ class AuthController extends Controller
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'required'
+            'gender' => 'required',
+            'status' => 'required'
         ];
+
         $validator = Validator::make($credentials, $rules);
         if($validator->fails()) {
             return response()->json(['success'=> false, 'error'=> 'Некорректные данные :(']);
@@ -39,9 +41,10 @@ class AuthController extends Controller
         
         $email = $request->email;
         $password = $request->password;
-        $admin = 0;        
+        $superadmin = 0; 
+        $admin = $request->status == 'creator' ? 1 : 0;               
         
-        $user = User::create(['email' => $email, 'password' => Hash::make($password), 'admin' => $admin]);
+        $user = User::create(['email' => $email, 'password' => Hash::make($password), 'admin' => $admin, 'superadmin' => $superadmin]);
 
         $birth = new DateTime($request->date_of_birth);
         $gender_avatars = Avatar::where('gender_id', $request->gender)->get();

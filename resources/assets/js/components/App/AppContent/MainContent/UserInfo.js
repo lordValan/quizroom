@@ -9,13 +9,15 @@ class UserInfo extends Component {
             return obj.name;
         }));
 
-        this.groups_str = groups_names.length > 0 ? groups_names.join() : 'Еще не приняли :(';
+        this.groups_str = groups_names.length > 0 ? groups_names.join(', ') : 'Еще не приняли :(';
     }  
 
     render() {    
       return (
         <div className="UserInfo">
-            <img src={ imagesUrl + this.props.UserInfo.avatar.path } alt="avatar" className="Avatar" />
+            <div className="Avatar">
+                <img src={ imagesUrl + this.props.UserInfo.avatar.path } alt="avatar" />
+            </div>
             <div className="Info">
                 <div className="InfoItem">
                     <span className="Key">Имя</span>
@@ -27,7 +29,7 @@ class UserInfo extends Component {
                 </div>
                 <div className="InfoItem">
                     <span className="Key">Статус</span>
-                    <span className="Value">{this.props.isAdmin === 1 ? 'Администратор' : 'Пользователь'}</span>
+                    <span className="Value">{this.props.status}</span>
                 </div>   
                 <div className="InfoItem">
                     <span className="Key">Пол</span>

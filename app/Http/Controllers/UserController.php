@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Avatar;
+use App\Quiz;
 use App\UserInfo;
 use JWTAuth, Validator;
 
@@ -22,6 +23,18 @@ class UserController extends Controller
 
     public function user_info(Request $request) {
         return $this->user->info;
+    }  
+
+    public function quizzes(Request $request) {
+        if($this->user->is_admin()) {
+            if($this->user->is_superadmin()) {
+                return Quiz::all();
+            } else {
+                return $this->user->created_quizzes;
+            }
+        } else {
+            return 'Accsess denied';
+        }
     }  
 
     public function profile() {
@@ -51,13 +64,7 @@ class UserController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'avatar_id' => $request->avatar_id,
-            ]);
-
-        /* $this->user->info->first_name = $request->first_name;
-        $this->user->info->last_name = $request->last_name;
-        $this->user->info->avatar->id = $request->avatar_id;
-
-        $this->user->save(); */
+            ]);        
 
         return response()->json(['success'=> true, 'error'=> 'Сохранено']);
     }

@@ -11,7 +11,13 @@ import areIntlLocalesSupported from 'intl-locales-supported';
 
 class App extends Component {
     constructor(props) {
-      super(props);
+      super(props);      
+
+      this.statuses = [
+        {id: 'user', name: 'Пользователь'},
+        {id: 'creator', name: 'Создатель'}
+      ];
+
       this.state = { 
         drawerOpen: false, 
         logOutDialogOpen: false, 
@@ -19,7 +25,8 @@ class App extends Component {
         IsLoaded: false,
         loginError: '',
         registerError: '',
-        selectedRegDateBirth: DefaultBirthDate
+        selectedRegDateBirth: DefaultBirthDate,
+        selectedStatus: this.statuses[0].id
       };
       
       /* login inputs */
@@ -227,7 +234,8 @@ class App extends Component {
       first_name: this.reg_fname_input.current.input.value,
       last_name: this.reg_lname_input.current.input.value,
       date_of_birth: this.state.selectedRegDateBirth,
-      gender: this.state.SelectedRegGender
+      gender: this.state.SelectedRegGender,
+      status: this.state.selectedStatus
     })
       .then((response) => {
         if(response.data.success) {
@@ -249,12 +257,14 @@ class App extends Component {
         <form onSubmit={ this.registrationFormSubmitHandler.bind(this) } autoComplete="off">
           <input type="email" style={{opacity: '0', position: 'absolute'}} />
           <input type="password" style={{opacity: '0', position: 'absolute'}} />
-          <TextField ref={this.reg_fname_input} hintText="Имя" floatingLabelText="Имя" 
-                    type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
-                    floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_first_name" autoComplete="off" />
-          <TextField ref={this.reg_lname_input} hintText="Фамилия" floatingLabelText="Фамилия" 
-                    type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
-                    floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_last_name" autoComplete="off"/>
+          <div className="namesRow">
+            <TextField ref={this.reg_fname_input} hintText="Имя" floatingLabelText="Имя" 
+                      type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_first_name" autoComplete="off" />
+            <TextField ref={this.reg_lname_input} hintText="Фамилия" floatingLabelText="Фамилия" 
+                      type="text" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
+                      floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_last_name" autoComplete="off"/>
+          </div>
           <TextField ref={this.reg_email_input} hintText="E-Mail" floatingLabelText="E-Mail" 
                     type="email" required={true} underlineFocusStyle={{ borderColor: '#0098d4' }} 
                     floatingLabelFocusStyle={{ color: '#0098d4' }} name="reg_email" autoComplete="off"/>
@@ -267,11 +277,19 @@ class App extends Component {
                 {this.state.Genders.map((a) => {
                     return <RadioButton key={a.id} value={a.id} label={a.name} className="RegGenderButton" />
                 })}
-              </RadioButtonGroup>      
+              </RadioButtonGroup>
+              <RadioButtonGroup name="RegStatusButtons" defaultSelected={this.state.selectedStatus} 
+                                onChange={ (obj, val) => this.setState({selectedStatus: val}) } >
+                {this.statuses.map((s) => {
+                    return <RadioButton key={s.id} value={s.id} label={s.name} className="RegStatusButton" />
+                })}
+              </RadioButtonGroup>                                           
+          </div>
+          <div className="statusRow"> 
               <DatePicker hintText="Дата рождения" okLabel="OK" cancelLabel="Отмена" 
                           DateTimeFormat={this.DateTimeFormat} locale="ru" className="BirthDatePicker"
                           maxDate={ DefaultBirthDate } defaultDate={ DefaultBirthDate }
-                          onChange={ (obj, date) => this.setState({selectedRegDateBirth: date}) } />                       
+                          onChange={ (obj, date) => this.setState({selectedRegDateBirth: date}) } />
           </div>
           <FlatButton label="Зарегистрироваться" type="submit" />
           <FlatButton label="Я уже зарегистрирован" type="button" className="loginRegSwitchButton"

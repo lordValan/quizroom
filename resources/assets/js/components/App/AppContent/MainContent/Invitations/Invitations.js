@@ -32,7 +32,7 @@ class Invitations extends Component {
 
     drawEmpty() {
       return <p className="EmptyQuizzes">
-        У Вас нет приглашений :(
+        Приглашений не найдено!
       </p>
     }
 

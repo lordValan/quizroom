@@ -8,7 +8,8 @@ class CreateQuizComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoaded: false
+            isLoaded: false,
+            newQuizTmp: JSON.parse(JSON.stringify(NewQuizTemplate))
         };
     }
 
@@ -31,8 +32,9 @@ class CreateQuizComponent extends Component {
     drawComponent() {
         return  (
             <div className={ this.props.className ? this.props.className : "MainContent" }>
-                <MainContentInfoBlock Title="Создать тест" Content={<EditQuiz quiz={NewQuizTemplate} 
-                            categories={this.state.categories} groups={this.state.groups} />} BgColor="#F4F3F2" />
+                <MainContentInfoBlock Title="Создать тест" Content={<EditQuiz quiz={this.state.newQuizTmp} 
+                            categories={this.state.categories} groups={this.state.groups} 
+                            finishRoute="api/admin/quizzes/create" />} BgColor="#F4F3F2" />
             </div>
         ) 
     }

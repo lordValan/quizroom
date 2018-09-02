@@ -6,7 +6,7 @@ class ManagementComponent extends Component {
     render() {
         return  (
             <div className={ this.props.className ? this.props.className : "MainContent" }>
-                <MainContentInfoBlock Title="Управление" Content={<Management />} BgColor="#F4F3F2" />
+                <MainContentInfoBlock Title="Управление тестами" Content={<Management />} BgColor="#F4F3F2" />
             </div>
         )        
     }
